@@ -13,4 +13,7 @@
     <string name="signing_up">Signing up</string>
     <string name="email_or_username">Email or username</string>
     <string name="submit">Submit</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="edit_profile">Edit profile</string>
 </resources>

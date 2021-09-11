@@ -7,6 +7,8 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import hu.bme.aut.conicon.ui.login.LoginViewModel
 import hu.bme.aut.conicon.ui.main.MainViewModel
+import hu.bme.aut.conicon.ui.main.home.HomeViewModel
+import hu.bme.aut.conicon.ui.main.profile.ProfileViewModel
 import hu.bme.aut.conicon.ui.setusername.SetUsernameViewModel
 import hu.bme.aut.conicon.ui.signup.SignUpViewModel
 
@@ -31,4 +33,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SetUsernameViewModel::class)
     abstract fun bindSetUsernameViewModel(setUsernameViewModel: SetUsernameViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel::class)
+    abstract fun bindHomeViewModel(homeViewModel: HomeViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel::class)
+    abstract fun bindProfileViewModel(profileViewModel: ProfileViewModel) : ViewModel
 }
