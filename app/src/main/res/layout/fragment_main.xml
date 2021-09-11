@@ -68,6 +68,20 @@
         android:layout_below="@id/appBarLayout"
         android:layout_above="@id/downLine" />
 
+    <TextView
+        android:id="@+id/tvEmailVerification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email_verification_required"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="@color/error"
+        android:paddingVertical="8dp"
+        android:layout_below="@id/appBarLayout"
+        android:visibility="gone" />
+
     <View
         android:id="@+id/downLine"
         android:layout_width="match_parent"

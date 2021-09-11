@@ -1,10 +1,7 @@
 package hu.bme.aut.conicon.ui.setusername
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -37,12 +34,18 @@ class SetUsernameViewModel @Inject constructor(
                     viewState = UsernameTakenError
                 } else {
                     // If username is not taken
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-                    val email = FirebaseAuth.getInstance().currentUser?.email.toString()
+                    val auth = FirebaseAuth.getInstance()
+                    val uid = auth.currentUser?.uid.toString()
+                    val email = auth.currentUser?.email.toString()
+                    var photoUrl : String? = null
+
+                    if (auth.currentUser?.photoUrl != null) {
+                        photoUrl = auth.currentUser?.photoUrl.toString()
+                    }
 
                     userDatabaseReference.child(uid).setValue(
                         AppUser(
-                            uid, username, email, mutableListOf(), mutableListOf(), mutableListOf()
+                            uid, username, email, photoUrl, mutableListOf(), mutableListOf(), mutableListOf()
                         )
                     ).addOnSuccessListener {
                         viewState = SuccessfullyRegistered
@@ -56,30 +59,5 @@ class SetUsernameViewModel @Inject constructor(
                 DatabaseError(error.message)
             }
         })
-
-        /*
-        val thread = viewModelScope.launch {
-            Log.d("TAKEN", "Checking")
-            if (taken) {
-                viewState = UsernameTakenError
-            } else {
-                val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-                val email = FirebaseAuth.getInstance().currentUser?.email.toString()
-
-                userDatabaseReference.child(uid).setValue(
-                    AppUser(
-                        uid, username, email, mutableListOf(), mutableListOf(), mutableListOf()
-                    )
-                ).addOnSuccessListener {
-                    viewState = SuccessfullyRegistered
-                }.addOnFailureListener { ex ->
-                    viewState = DatabaseError(ex.message.toString())
-                }
-            }
-        }
-        thread.start()
-        thread.join()
-
-         */
     }
 }

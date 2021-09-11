@@ -42,6 +42,8 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkIfEmailIsVerified()
+
         binding.btnFab.setOnClickListener {
             // TODO: Implementation of adding a new post instead of signing out
             signOut()
@@ -57,6 +59,25 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         }
 
         setupTabLayout(binding.tlTabLayout, binding.vpViewPager)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        checkIfEmailIsVerified()
+    }
+
+    /**
+     * This method's exercise is to check if the user has verified his email
+     */
+    private fun checkIfEmailIsVerified() {
+        FirebaseAuth.getInstance().currentUser?.reload()?.addOnSuccessListener {
+            binding.tvEmailVerification.visibility = if (FirebaseAuth.getInstance().currentUser?.isEmailVerified as Boolean) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        }
     }
 
     /**

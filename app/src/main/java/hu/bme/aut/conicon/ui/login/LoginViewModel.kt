@@ -107,21 +107,6 @@ class LoginViewModel @javax.inject.Inject constructor(
                 if (dataSnapshot.value == null) {
                     val sharedPref = context.getSharedPreferences("CONICON_AUTH", Context.MODE_PRIVATE)
                     sharedPref.edit().putBoolean("no_username", true).apply()
-
-                    /*
-                    // If the account does not exist in the Realtime Database,
-                    // we have to create it
-                    val username = auth.currentUser?.displayName.toString()
-                    val email = auth.currentUser?.email.toString()
-                    val newUser = AppUser(uid, username, email, mutableListOf(), mutableListOf(), mutableListOf())
-
-                    userDatabaseReference.child(uid).setValue(newUser).addOnSuccessListener {
-                        viewState = SuccessfulLogin
-                    }.addOnFailureListener { ex ->
-                        viewState = LoginError(ex.message.toString())
-                    }
-                    */
-
                     viewState = SetUsername
                 } else {
                     // If the account exists in the Realtime Database, we logged in

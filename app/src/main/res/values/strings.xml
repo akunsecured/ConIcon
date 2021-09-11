@@ -16,4 +16,5 @@
     <string name="following">Following</string>
     <string name="followers">Followers</string>
     <string name="edit_profile">Edit profile</string>
+    <string name="email_verification_required">You have not verified your email yet!</string>
 </resources>
