@@ -17,4 +17,7 @@
     <string name="followers">Followers</string>
     <string name="edit_profile">Edit profile</string>
     <string name="email_verification_required">You have not verified your email yet!</string>
+    <string name="sign_out">Sign out</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="you_are_currently_offline">You are currently offline</string>
 </resources>

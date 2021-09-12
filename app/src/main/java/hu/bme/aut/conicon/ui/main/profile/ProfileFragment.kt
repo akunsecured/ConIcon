@@ -8,11 +8,13 @@ import android.widget.Toast
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
+import co.zsmb.rainbowcake.navigation.navigator
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.login.LoginFragment
 
 /**
  * This is the view of the current user's profile
@@ -36,6 +38,17 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getUserData(auth.currentUser?.uid.toString())
+        }
+
+        binding.btnSignOut.setOnClickListener {
+            auth.signOut()
+            navigator?.replace(
+                LoginFragment(),
+                R.anim.from_down_to_up_in,
+                R.anim.from_down_to_up_out,
+                R.anim.from_up_to_down_in,
+                R.anim.from_up_to_down_out
+            )
         }
     }
 

@@ -22,6 +22,7 @@ class ProfileViewModel @Inject constructor(
         delay(500)
 
         val userDatabaseReference = Firebase.database.reference.child("users")
+        userDatabaseReference.keepSynced(true)
         userDatabaseReference.child(uid).get().addOnSuccessListener { dataSnapshot ->
             if (dataSnapshot.value == null) {
                 viewState = NoUserWithThisUID

@@ -60,13 +60,20 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vpViewPager"
+    <TextView
+        android:id="@+id/tvConnectionInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:text="@string/you_are_currently_offline"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:background="@color/error"
+        android:paddingVertical="8dp"
         android:layout_below="@id/appBarLayout"
-        android:layout_above="@id/downLine" />
+        android:alpha="0"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tvEmailVerification"
@@ -79,8 +86,16 @@
         android:gravity="center"
         android:background="@color/error"
         android:paddingVertical="8dp"
-        android:layout_below="@id/appBarLayout"
+        android:layout_below="@id/tvConnectionInfo"
         android:visibility="gone" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:layout_below="@id/tvEmailVerification"
+        android:layout_above="@id/downLine" />
 
     <View
         android:id="@+id/downLine"
@@ -88,27 +103,7 @@
         android:layout_height="1dp"
         android:layout_marginHorizontal="8dp"
         android:background="@color/orange"
-        android:layout_above="@+id/bottomAppBar"/>
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/background"
-        android:layout_alignParentBottom="true"
-        tools:ignore="BottomAppBar" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="28dp"
-        android:backgroundTint="@color/orange"
-        app:borderWidth="0dp"
-        app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@color/background" />
+        android:layout_above="@+id/tlTabLayout"/>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tlTabLayout"

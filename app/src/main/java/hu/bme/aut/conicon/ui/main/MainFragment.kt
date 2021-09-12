@@ -1,23 +1,27 @@
 package hu.bme.aut.conicon.ui.main
 
+import android.animation.Animator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.viewpager2.widget.ViewPager2
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
-import co.zsmb.rainbowcake.navigation.navigator
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.PagerAdapter
 import hu.bme.aut.conicon.databinding.FragmentMainBinding
-import hu.bme.aut.conicon.ui.login.LoginFragment
 
 /**
  * This is the application's main view
@@ -31,6 +35,7 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
      */
     private val tabIcons = arrayListOf (
             R.drawable.ic_home,
+            R.drawable.ic_add,
             R.drawable.ic_profile
     )
 
@@ -42,12 +47,8 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        checkOnlineStatus()
         checkIfEmailIsVerified()
-
-        binding.btnFab.setOnClickListener {
-            // TODO: Implementation of adding a new post instead of signing out
-            signOut()
-        }
 
         binding.ivLogoMin.setOnClickListener {
             // Changing the TabLayout to the HomeFragment
@@ -65,6 +66,56 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         super.onResume()
 
         checkIfEmailIsVerified()
+    }
+
+    /**
+     * This method is responsible for checking the online status of the user.
+     * If the app has lost the connection to the Firebase Database server,
+     * a red TextView will appear at the top of the View. This TextView will
+     * disappear as soon as the user has got internet connection again.
+     */
+    private fun checkOnlineStatus() {
+        val connectedRef = Firebase.database.getReference(".info/connected")
+        connectedRef.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val connected = snapshot.getValue(Boolean::class.java) ?: false
+                val tvConnectionInfo = binding.tvConnectionInfo
+
+                val alpha: Float = if (connected) 0f else 1f
+
+                if (!connected) {
+                    tvConnectionInfo.alpha = 0f
+                    tvConnectionInfo.visibility = View.VISIBLE
+                }
+
+                // Showing connection info
+                tvConnectionInfo.animate().setDuration(2000).alpha(alpha).setListener(object: Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator?) {
+                        // It can be empty
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        if (connected) {
+                            tvConnectionInfo.visibility = View.GONE
+                        }
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                        // It can be empty
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+                        // It can be empty
+                    }
+                })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Listener was cancelled
+                Log.d("FirebaseDatabase", "Online checking listener was cancelled")
+            }
+
+        })
     }
 
     /**
@@ -87,6 +138,7 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
      */
     private fun setupTabLayout(tabLayout: TabLayout, viewPager: ViewPager2) {
         tabLayout.addTab(tabLayout.newTab().setTag("HOME"))
+        tabLayout.addTab(tabLayout.newTab().setTag("ADD"))
         tabLayout.addTab(tabLayout.newTab().setTag("PROFILE"))
 
         viewPager.adapter = PagerAdapter(requireActivity(), tabLayout.tabCount)
@@ -95,16 +147,6 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.icon = AppCompatResources.getDrawable(requireContext(), tabIcons[position])
         }.attach()
-    }
-
-    /**
-     * Sign out method for testing
-     */
-    private fun signOut() {
-        val auth = FirebaseAuth.getInstance()
-        auth.signOut()
-
-        navigator?.replace(LoginFragment(), R.anim.from_down_to_up_in, R.anim.from_down_to_up_out, R.anim.from_up_to_down_in, R.anim.from_up_to_down_out)
     }
 
     override fun getViewResource(): Int = R.layout.fragment_main
