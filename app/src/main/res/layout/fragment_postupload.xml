@@ -1,6 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clPostImage"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@color/orange"
+            android:padding="2dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true">
+
+            <ImageView
+                android:id="@+id/ivSelectedImage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/pbProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/orange"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSelectImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_image"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:layout_margin="8dp"
+            app:strokeColor="@color/orange"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_below="@id/clPostImage" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPostDetails"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/post_details"
+            android:textColorHint="@color/orange"
+            app:boxStrokeColor="@color/orange"
+            app:boxStrokeWidth="2dp"
+            android:layout_margin="8dp"
+            android:layout_below="@id/btnSelectImage">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietPostDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:nextFocusForward="@id/btnPost" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/post_image"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:paddingVertical="10dp"
+            android:layout_margin="8dp"
+            android:layout_below="@id/tilPostDetails"
+            android:enabled="false" />
+
+    </RelativeLayout>
+
+</ScrollView>

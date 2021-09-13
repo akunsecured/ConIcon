@@ -20,4 +20,7 @@
     <string name="sign_out">Sign out</string>
     <string name="choose_theme">Choose theme</string>
     <string name="you_are_currently_offline">You are currently offline</string>
+    <string name="post_details">Post details</string>
+    <string name="select_image">Select image</string>
+    <string name="post_image">Post image</string>
 </resources>

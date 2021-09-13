@@ -14,6 +14,9 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 
+/**
+ * This class is the Adapter of the posts' RecyclerView
+ */
 class MediaAdapter(private val context: Context, private val listener: MediaItemClickListener) : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     var mediaElements = arrayListOf<MediaElement>()
     var linkedUsers = arrayListOf<AppUser>()
@@ -59,10 +62,10 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
 
             if (drawable.constantState == AppCompatResources.getDrawable(context, R.drawable.ic_heart_empty)?.constantState) {
                 holder.btnLike.setImageResource(R.drawable.ic_heart_filled)
-                holder.tvLikes.text = "${mediaElement.likes + 1} likes"
+                holder.tvLikes.text = "${mediaElement.likes.size + 1} likes"
             } else {
                 holder.btnLike.setImageResource(R.drawable.ic_heart_empty)
-                holder.tvLikes.text = "${mediaElement.likes - 1} likes"
+                holder.tvLikes.text = "${mediaElement.likes.size - 1} likes"
             }
         }
 
@@ -70,7 +73,7 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
             Toast.makeText(context, "Comment", Toast.LENGTH_SHORT).show()
         }
 
-        holder.tvLikes.text = "${mediaElement.likes} likes"
+        holder.tvLikes.text = "${mediaElement.likes.size} likes"
     }
 
     interface MediaItemClickListener {
