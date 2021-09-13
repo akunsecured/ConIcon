@@ -101,10 +101,20 @@
         android:textSize="18sp"/>
 
     <TextView
-        android:id="@+id/tvDate"
+        android:id="@+id/tvDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvLikes"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="8dp"
+        android:text="This image is beautiful ..."
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvDetails"
         android:layout_margin="8dp"
         android:text="2021. augusztus 2."
         android:textSize="14sp"/>

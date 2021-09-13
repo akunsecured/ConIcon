@@ -47,7 +47,9 @@ class PostUploadViewModel @Inject constructor(
                     Firebase.database.reference.child("posts").push()
                 postDatabaseReference.setValue(
                     MediaElement(
-                        currentDate.toString(),
+                        postDatabaseReference.key.toString(),
+                        // Negative date is required for showing posts in the correct order
+                        -currentDate,
                         uid,
                         url.toString(),
                         arrayListOf(),

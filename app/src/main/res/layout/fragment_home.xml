@@ -6,16 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background">
 
-    <ProgressBar
-        android:id="@+id/pbProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyle"
-        android:indeterminateTint="@color/orange"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
