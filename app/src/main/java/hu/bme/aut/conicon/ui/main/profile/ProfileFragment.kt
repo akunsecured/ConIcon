@@ -40,6 +40,7 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
             viewModel.getUserData(auth.currentUser?.uid.toString())
         }
 
+        // Showing a popup menu that includes the sign out option
         binding.ivMenu.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
             popupMenu.setOnMenuItemClickListener { item ->
@@ -64,6 +65,9 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
         }
     }
 
+    /**
+     * This method updates the fragment with the current user's data
+     */
     private fun updateUI(user: AppUser) {
         binding.tvUsername.text = user.username
 

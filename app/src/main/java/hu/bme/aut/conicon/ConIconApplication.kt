@@ -5,6 +5,7 @@ import co.zsmb.rainbowcake.config.Loggers
 import co.zsmb.rainbowcake.config.rainbowCake
 import co.zsmb.rainbowcake.dagger.RainbowCakeApplication
 import co.zsmb.rainbowcake.timber.TIMBER
+import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.conicon.di.AppComponent
 import hu.bme.aut.conicon.di.DaggerAppComponent
 import timber.log.Timber
@@ -18,6 +19,9 @@ class ConIconApplication : RainbowCakeApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Application will be working offline too
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
         rainbowCake {
             logger = Loggers.TIMBER
