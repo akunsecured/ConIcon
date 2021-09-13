@@ -7,59 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background"
-        android:layout_alignParentTop="true">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:contentInsetStart="0dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="?attr/actionBarSize">
-
-                <ImageView
-                    android:id="@+id/ivLogoMin"
-                    android:layout_width="112dp"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_marginHorizontal="12dp"
-                    android:src="@drawable/conicon_logo"
-                    android:background="?android:selectableItemBackground"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/ivMessages"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginHorizontal="12dp"
-                    android:src="@drawable/ic_send"
-                    android:background="?android:selectableItemBackground"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:background="@color/orange"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
     <TextView
         android:id="@+id/tvConnectionInfo"
         android:layout_width="match_parent"
@@ -71,7 +18,7 @@
         android:gravity="center"
         android:background="@color/error"
         android:paddingVertical="8dp"
-        android:layout_below="@id/appBarLayout"
+        android:layout_alignParentTop="true"
         android:alpha="0"
         android:visibility="gone" />
 
@@ -92,7 +39,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vpViewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/background"
         android:layout_below="@id/tvEmailVerification"
         android:layout_above="@id/downLine" />

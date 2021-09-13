@@ -39,6 +39,10 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
             viewModel.getPosts()
         }
 
+        binding.ivLogoMin.setOnClickListener {
+            (binding.rvPosts.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
+        }
+
         // TODO: Database handling
         viewModel.getPosts()
     }

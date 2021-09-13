@@ -1,9 +1,8 @@
 package hu.bme.aut.conicon.ui.main.profile
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -23,6 +22,7 @@ import hu.bme.aut.conicon.ui.login.LoginFragment
 class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
 
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -32,7 +32,7 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val auth = FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         viewModel.getUserData(auth.currentUser?.uid.toString())
 
@@ -40,15 +40,27 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
             viewModel.getUserData(auth.currentUser?.uid.toString())
         }
 
-        binding.btnSignOut.setOnClickListener {
-            auth.signOut()
-            navigator?.replace(
-                LoginFragment(),
-                R.anim.from_down_to_up_in,
-                R.anim.from_down_to_up_out,
-                R.anim.from_up_to_down_in,
-                R.anim.from_up_to_down_out
-            )
+        binding.ivMenu.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), it)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.nav_sign_out -> {
+                        auth.signOut()
+                        navigator?.replace(
+                            LoginFragment(),
+                            R.anim.from_down_to_up_in,
+                            R.anim.from_down_to_up_out,
+                            R.anim.from_up_to_down_in,
+                            R.anim.from_up_to_down_out
+                        )
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            popupMenu.inflate(R.menu.profile_menu)
+            popupMenu.show()
         }
     }
 

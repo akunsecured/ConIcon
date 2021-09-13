@@ -38,7 +38,7 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
             startCropImageActivity()
         }
         
-        binding.btnPost.setOnClickListener {
+        binding.ivSend.setOnClickListener {
             if (filePath != null) {
                 if (!binding.tietPostDetails.text.isNullOrEmpty()) {
                     val postDetails = binding.tietPostDetails.text.toString()
@@ -76,9 +76,9 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
 
             UploadReady -> {
                 Toast.makeText(requireContext(), "Upload ready", Toast.LENGTH_SHORT).show()
-                binding.btnPost.isEnabled = false
+                binding.ivSend.visibility = View.GONE
                 binding.tietPostDetails.text?.clear()
-                binding.ivSelectedImage.setImageResource(R.drawable.ic_launcher_background)
+                binding.ivSelectedImage.setImageResource(R.drawable.ic_image)
                 filePath = null
                 viewModel.init()
             }
@@ -97,7 +97,7 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
             if (resultCode == RESULT_OK) {
                 filePath = result.uri
                 binding.ivSelectedImage.setImageURI(filePath)
-                binding.btnPost.isEnabled = true
+                binding.ivSend.visibility = View.VISIBLE
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val ex = result.error
             }

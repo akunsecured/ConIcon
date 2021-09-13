@@ -50,15 +50,6 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         checkOnlineStatus()
         checkIfEmailIsVerified()
 
-        binding.ivLogoMin.setOnClickListener {
-            // Changing the TabLayout to the HomeFragment
-            binding.vpViewPager.currentItem = 0
-        }
-
-        binding.ivMessages.setOnClickListener {
-            // TODO: Start the activity of the conversations
-        }
-
         setupTabLayout(binding.tlTabLayout, binding.vpViewPager)
     }
 
