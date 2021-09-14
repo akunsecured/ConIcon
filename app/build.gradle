@@ -85,5 +85,6 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     // Image cropper
-    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    def version = '3.3.5'
+    implementation "com.github.CanHub:Android-Image-Cropper:$version"
 }

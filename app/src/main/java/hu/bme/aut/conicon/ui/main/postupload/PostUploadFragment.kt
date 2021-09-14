@@ -12,8 +12,7 @@ import android.widget.Toast
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.*
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentPostuploadBinding
 
@@ -55,9 +54,9 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
      */
     private fun startCropImageActivity() {
         CropImage.activity()
-                .setAspectRatio(1, 1)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .start(requireContext(), this)
+            .setAspectRatio(1, 1)
+            .setGuidelines(CropImageView.Guidelines.ON)
+            .start(requireContext(), this)
     }
 
     override fun getViewResource(): Int = R.layout.fragment_postupload
@@ -95,11 +94,11 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                filePath = result.uri
+                filePath = result?.uriContent
                 binding.ivSelectedImage.setImageURI(filePath)
                 binding.ivSend.visibility = View.VISIBLE
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val ex = result.error
+                val ex = result?.error
             }
         }
     }
