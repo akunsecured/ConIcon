@@ -13,4 +13,15 @@
     <string name="signing_up">Signing up</string>
     <string name="email_or_username">Email or username</string>
     <string name="submit">Submit</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="email_verification_required">You have not verified your email yet!</string>
+    <string name="sign_out">Sign out</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="you_are_currently_offline">You are currently offline</string>
+    <string name="post_details">Post details</string>
+    <string name="select_image">Select image</string>
+    <string name="post_image">Post image</string>
+    <string name="posting_a_new_image">Posting a new image</string>
 </resources>

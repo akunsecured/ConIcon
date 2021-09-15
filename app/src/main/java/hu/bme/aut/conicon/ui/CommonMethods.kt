@@ -1,10 +1,13 @@
 package hu.bme.aut.conicon.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import hu.bme.aut.conicon.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * This class contains all of the methods which are commonly used
@@ -109,7 +112,13 @@ class CommonMethods {
     }
 
     /**
-     *
+     * This method validates the EditText to match the rules which are given as parameters
+     * @param context Context
+     * @param tiet The EditText of the field
+     * @param til The field
+     * @param minLength Minimum length of the text
+     * @param maxLength Maximum length of the text
+     * @param regex Regular expression
      */
     fun validateEditText(context: Context, tiet: TextInputEditText, til: TextInputLayout, minLength: Int, maxLength: Int, regex: Regex) : Boolean {
         if (checkEditTextLength(tiet, til, context, minLength, maxLength)) {
@@ -120,5 +129,29 @@ class CommonMethods {
         }
 
         return false
+    }
+
+    /**
+     * This method formats the given date
+     * @param date The Long form of the date to format
+     */
+    @SuppressLint("SimpleDateFormat")
+    fun formatDate(date: Long) : String {
+        val diff = Date().time - date
+
+        return when {
+            diff < 86400001 -> {
+                SimpleDateFormat("HH:mm").format(date)
+            }
+            diff in 86400001..604800000 -> {
+                SimpleDateFormat("E").format(date)
+            }
+            diff in 604800001..31556952000 -> {
+                SimpleDateFormat("MMM. dd").format(date)
+            }
+            else -> {
+                SimpleDateFormat("yyyy. MMM. dd.").format(date)
+            }
+        }
     }
 }

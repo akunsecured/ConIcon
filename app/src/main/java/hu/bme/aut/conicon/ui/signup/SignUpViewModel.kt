@@ -52,8 +52,9 @@ class SignUpViewModel @Inject constructor(
                     // If it was successful, we can use the UID
                     // to create a new record into the Realtime Database
                     val uid = authResult.user?.uid.toString()
-                    val newUser = AppUser(uid, username, email, mutableListOf(), mutableListOf(), mutableListOf())
+                    val newUser = AppUser(uid, username, email, null, mutableListOf(), mutableListOf(), mutableListOf())
                     userDatabaseReference.child(uid).setValue(newUser).addOnSuccessListener {
+                        auth.currentUser?.sendEmailVerification()
                         // Logging out the user
                         auth.signOut()
                         viewState = SignUpReady
