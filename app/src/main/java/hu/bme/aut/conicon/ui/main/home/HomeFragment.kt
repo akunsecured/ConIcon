@@ -1,5 +1,6 @@
 package hu.bme.aut.conicon.ui.main.home
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,7 @@ import hu.bme.aut.conicon.network.model.MediaElement
 /**
  * This is the view where the posts will be shown
  */
-class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaAdapter.MediaItemClickListener {
+class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaAdapter.MediaItemListener {
 
     private lateinit var binding: FragmentHomeBinding
     private var posts = mutableListOf<MediaElement>()
@@ -49,11 +50,9 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
 
     private fun initRecyclerView() {
         adapter = MediaAdapter(requireContext(), this)
-        binding.rvPosts.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        )
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+        layoutManager.stackFromEnd = true
+        binding.rvPosts.layoutManager = layoutManager
         binding.rvPosts.adapter = adapter
     }
 
@@ -93,5 +92,9 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
 
         // TODO: Database handling
         viewModel.init()
+    }
+
+    override fun viewLikes(likes: MutableList<String>) {
+
     }
 }

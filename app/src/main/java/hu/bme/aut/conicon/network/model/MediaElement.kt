@@ -6,6 +6,6 @@ data class MediaElement (
         val ownerID: String,
         val mediaLink: String,
         var likes: MutableList<String>,
-        val comments: MutableList<CommentElement>,
+        val comments: MutableList<String>,
         val details: String?
 )

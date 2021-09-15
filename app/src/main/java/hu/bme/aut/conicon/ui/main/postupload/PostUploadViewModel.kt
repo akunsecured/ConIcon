@@ -4,11 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
-import hu.bme.aut.conicon.network.model.MediaElement
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -43,21 +41,25 @@ class PostUploadViewModel @Inject constructor(
 
         storageReference.putFile(uri).addOnSuccessListener {
             storageReference.downloadUrl.addOnSuccessListener { url ->
-                val postDatabaseReference =
-                    Firebase.database.reference.child("posts").push()
-                postDatabaseReference.setValue(
-                    MediaElement(
-                        postDatabaseReference.key.toString(),
-                        // Negative date is required for showing posts in the correct order
-                        -currentDate,
-                        uid,
-                        url.toString(),
-                        arrayListOf(),
-                        arrayListOf(),
-                        postDetails
-                    )
+                val postID = "$uid-$currentDate"
+                val postCollection = FirebaseFirestore.getInstance().collection("posts")
+                postCollection.document(postID).set(
+                        hashMapOf(
+                                "id" to postID,
+                                "date" to currentDate,
+                                "ownerID" to uid,
+                                "mediaLink" to url.toString(),
+                                "likes" to arrayListOf<String>(),
+                                "comments" to arrayListOf<String>(),
+                                "details" to postDetails
+                        )
                 ).addOnSuccessListener {
-                    viewState = UploadReady
+                    val userRef = FirebaseFirestore.getInstance().collection("users").document(uid)
+                    userRef.update("posts", FieldValue.arrayUnion(postID)).addOnSuccessListener {
+                        viewState = UploadReady
+                    }.addOnFailureListener { ex ->
+                        viewState = FirebaseError(ex.message.toString())
+                    }
                 }.addOnFailureListener { ex ->
                     viewState = FirebaseError(ex.message.toString())
                 }

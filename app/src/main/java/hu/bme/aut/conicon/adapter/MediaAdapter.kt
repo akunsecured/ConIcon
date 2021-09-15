@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.network.model.AppUser
@@ -22,7 +20,7 @@ import hu.bme.aut.conicon.ui.CommonMethods
 /**
  * This class is the Adapter of the posts' RecyclerView
  */
-class MediaAdapter(private val context: Context, private val listener: MediaItemClickListener) : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
+class MediaAdapter(private val context: Context, private val listener: MediaItemListener) : RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
     var mediaElements = arrayListOf<MediaElement>()
     var linkedUsers = arrayListOf<AppUser>()
 
@@ -54,7 +52,7 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
         holder.media = mediaElement
 
         val auth = FirebaseAuth.getInstance()
-        val postReference = Firebase.database.reference.child("posts/${mediaElement.id}")
+        val postReference = FirebaseFirestore.getInstance().collection("posts").document(mediaElement.id)
         val uid = auth.currentUser?.uid.toString()
 
         if (linkedUser.photoUrl != null) {
@@ -80,12 +78,12 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
                 holder.btnLike.setImageResource(R.drawable.ic_heart_empty)
 
                 mediaElement.likes.remove(uid)
-                postReference.child("likes/$uid").removeValue()
+                postReference.update("likes", FieldValue.arrayRemove(uid))
             } else {
                 holder.btnLike.setImageResource(R.drawable.ic_heart_filled)
 
                 mediaElement.likes.add(uid)
-                postReference.child("likes/$uid").setValue(true)
+                postReference.update("likes", FieldValue.arrayUnion(uid))
             }
 
             checkLikes(holder, mediaElement)
@@ -110,10 +108,13 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
     private fun checkLikes(holder: MediaViewHolder, mediaElement: MediaElement) {
         holder.tvLikes.visibility = if (mediaElement.likes.size == 0) View.GONE else View.VISIBLE
         holder.tvLikes.text = "${mediaElement.likes.size} likes"
+        holder.tvLikes.setOnClickListener {
+            listener.viewLikes(mediaElement.likes)
+        }
     }
 
-    interface MediaItemClickListener {
-
+    interface MediaItemListener {
+        fun viewLikes(likes: MutableList<String>)
     }
 
     override fun getItemCount(): Int = mediaElements.size
@@ -125,29 +126,23 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
     }
 
     private fun addPost(post: MediaElement) {
-        val usersReference = Firebase.database.reference.child("users")
-
-        usersReference.child(post.ownerID).get().addOnSuccessListener { dataSnapshot ->
-            if (dataSnapshot.value != null) {
-                val userHash = dataSnapshot.value as HashMap<*, *>
-
-                val username = userHash["username"] as String
-                var photoUrl: String? = null
-                if (userHash["photoUrl"] != null) {
-                    photoUrl = userHash["photoUrl"] as String
-                }
+        val userCollection = FirebaseFirestore.getInstance().collection("users")
+        userCollection.document(post.ownerID).get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val userDocument = document.data as Map<String, Any>
+                val username = userDocument["username"].toString()
+                val email = userDocument["email"].toString()
+                val photoUrl = userDocument["photoUrl"] as String?
+                val followers = userDocument["followers"] as MutableList<String>
+                val following = userDocument["following"] as MutableList<String>
+                val posts = userDocument["posts"] as MutableList<String>
 
                 mediaElements.add(post)
                 linkedUsers.add(
-                    AppUser(
-                        post.ownerID,
-                        username,
-                        "",
-                        photoUrl,
-                        mutableListOf(),
-                        mutableListOf(),
-                        mutableListOf()
-                    )
+                        AppUser(
+                                post.ownerID,
+                                username, email, photoUrl, followers, following, posts
+                        )
                 )
 
                 notifyDataSetChanged()

@@ -67,10 +67,12 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
         when (viewState) {
             Initialize -> {
                 binding.pbProgressBar.visibility = View.GONE
+                binding.btnSelectImage.isEnabled = true
             }
 
             Loading -> {
                 binding.pbProgressBar.visibility = View.VISIBLE
+                binding.btnSelectImage.isEnabled = false
             }
 
             UploadReady -> {
