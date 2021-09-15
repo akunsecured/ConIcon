@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
 
 /**
@@ -22,6 +23,7 @@ import hu.bme.aut.conicon.ui.login.LoginFragment
 class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
 
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var user: AppUser
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -37,6 +39,14 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.getUserData(userID)
+        }
+
+        binding.llFollowers.setOnClickListener {
+            navigator?.add(UsersFragment(user.followers, requireContext().getString(R.string.followers)))
+        }
+
+        binding.llFollowing.setOnClickListener {
+            navigator?.add(UsersFragment(user.following, requireContext().getString(R.string.following)))
         }
 
         // If it is the logged-in user's profile, the application shows a menu icon
@@ -100,7 +110,8 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
             }
 
             is UserDataReady -> {
-                updateUI(viewState.user)
+                user = viewState.user
+                updateUI(user)
                 viewModel.init()
             }
 
