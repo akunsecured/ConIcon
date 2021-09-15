@@ -5,6 +5,7 @@ import co.zsmb.rainbowcake.dagger.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import hu.bme.aut.conicon.ui.likes.UsersViewModel
 import hu.bme.aut.conicon.ui.login.LoginViewModel
 import hu.bme.aut.conicon.ui.main.MainViewModel
 import hu.bme.aut.conicon.ui.main.home.HomeViewModel
@@ -49,4 +50,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PostUploadViewModel::class)
     abstract fun bindPostUploadViewModel(postUploadViewModel: PostUploadViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UsersViewModel::class)
+    abstract fun bindUsersViewModel(usersViewModel: UsersViewModel) : ViewModel
 }

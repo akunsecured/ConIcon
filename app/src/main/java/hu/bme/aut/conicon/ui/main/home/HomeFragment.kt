@@ -1,6 +1,5 @@
 package hu.bme.aut.conicon.ui.main.home
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
+import co.zsmb.rainbowcake.navigation.navigator
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.MediaAdapter
 import hu.bme.aut.conicon.databinding.FragmentHomeBinding
 import hu.bme.aut.conicon.network.model.MediaElement
+import hu.bme.aut.conicon.ui.likes.UsersFragment
 
 /**
  * This is the view where the posts will be shown
@@ -95,6 +96,12 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
     }
 
     override fun viewLikes(likes: MutableList<String>) {
-
+        navigator?.add(
+                UsersFragment(likes, requireContext().getString(R.string.likes)),
+                R.anim.from_right_to_left_in,
+                R.anim.from_right_to_left_out,
+                R.anim.from_left_to_right_in,
+                R.anim.from_left_to_right_out
+        )
     }
 }

@@ -24,4 +24,6 @@
     <string name="select_image">Select image</string>
     <string name="post_image">Post image</string>
     <string name="posting_a_new_image">Posting a new image</string>
+    <string name="likes">Likes</string>
+    <string name="follow">Follow</string>
 </resources>
