@@ -11,3 +11,5 @@ object Loading : UsersViewState()
 data class UsersReady(val userElements: MutableList<AppUser>) : UsersViewState()
 
 data class FirebaseError(val message: String) : UsersViewState()
+
+object NoUsers : UsersViewState()

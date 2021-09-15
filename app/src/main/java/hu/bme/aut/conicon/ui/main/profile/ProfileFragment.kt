@@ -80,6 +80,7 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
      * This method updates the fragment with the current user's data
      */
     private fun updateUI(user: AppUser) {
+        binding.tvUsername.visibility = View.VISIBLE
         binding.tvUsername.text = user.username
 
         if (user.photoUrl != null) {
@@ -98,10 +99,13 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
         when (viewState) {
             Initialize -> {
                 binding.swipeRefreshLayout.isRefreshing = false
+                binding.rlProfileLayout.visibility = View.VISIBLE
             }
 
             Loading -> {
                 binding.swipeRefreshLayout.isRefreshing = true
+                binding.rlProfileLayout.visibility = View.GONE
+                binding.tvUsername.visibility = View.GONE
             }
 
             is DatabaseError -> {

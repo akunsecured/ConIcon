@@ -75,6 +75,12 @@ class UsersFragment(private val userIDs: MutableList<String>, private val appBar
                 Toast.makeText(requireContext(), viewState.message, Toast.LENGTH_SHORT).show()
                 viewModel.init()
             }
+
+            NoUsers -> {
+                binding.pbProgressBar.visibility = View.GONE
+                binding.tvNoUsers.visibility = View.VISIBLE
+                binding.tvNoUsers.text = "There are no ${appBarTitle.toLowerCase()}"
+            }
         }.exhaustive
     }
 
