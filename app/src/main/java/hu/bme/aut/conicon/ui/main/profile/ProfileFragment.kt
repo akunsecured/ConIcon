@@ -19,10 +19,9 @@ import hu.bme.aut.conicon.ui.login.LoginFragment
  * This is the view of the current user's profile
  * Here can the user change profile picture and edit its profile
  */
-class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
+class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
 
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -32,15 +31,17 @@ class ProfileFragment : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
+        val auth = FirebaseAuth.getInstance()
 
-        viewModel.getUserData(auth.currentUser?.uid.toString())
+        viewModel.getUserData(userID)
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.getUserData(auth.currentUser?.uid.toString())
+            viewModel.getUserData(userID)
         }
 
-        // Showing a popup menu that includes the sign out option
+        // If it is the logged-in user's profile, the application shows a menu icon
+        // that's click event will be a popup menu that includes the sign out option
+        binding.ivMenu.visibility = if (auth.currentUser?.uid == userID) View.VISIBLE else View.GONE
         binding.ivMenu.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
             popupMenu.setOnMenuItemClickListener { item ->

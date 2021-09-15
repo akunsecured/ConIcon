@@ -14,6 +14,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.UserAdapter
 import hu.bme.aut.conicon.databinding.FragmentUsersBinding
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
 
 class UsersFragment(private val userIDs: MutableList<String>, private val appBarTitle: String) : RainbowCakeFragment<UsersViewState, UsersViewModel>(), UserAdapter.UserItemClickListener {
 
@@ -78,6 +79,6 @@ class UsersFragment(private val userIDs: MutableList<String>, private val appBar
     }
 
     override fun onUserClicked(position: Int) {
-        Toast.makeText(requireContext(), userElements[position].id, Toast.LENGTH_SHORT).show()
+        navigator?.add(ProfileFragment(userElements[position].id))
     }
 }
