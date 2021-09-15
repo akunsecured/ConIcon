@@ -144,7 +144,7 @@ class CommonMethods {
                 SimpleDateFormat("HH:mm").format(date)
             }
             diff in 86400001..604800000 -> {
-                SimpleDateFormat("E").format(date)
+                SimpleDateFormat("EEEE").format(date)
             }
             diff in 604800001..31556952000 -> {
                 SimpleDateFormat("MMM. dd").format(date)

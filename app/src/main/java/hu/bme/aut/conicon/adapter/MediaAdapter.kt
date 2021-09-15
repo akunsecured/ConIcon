@@ -59,6 +59,8 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
 
         if (linkedUser.photoUrl != null) {
             Picasso.get().load(linkedUser.photoUrl).into(holder.ivProfilePicture)
+        } else {
+            holder.ivProfilePicture.setImageDrawable(context.getDrawable(R.drawable.ic_profile))
         }
 
         holder.tvUsername.text = linkedUser.username
