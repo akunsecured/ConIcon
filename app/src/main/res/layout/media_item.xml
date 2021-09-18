@@ -77,7 +77,6 @@
             android:src="@drawable/ic_heart_empty"
             android:layout_marginVertical="8dp"
             android:layout_marginHorizontal="8dp"
-            android:background="?android:selectableItemBackground"
             app:tint="@color/orange" />
 
         <ImageView
@@ -87,7 +86,6 @@
             android:src="@drawable/ic_comment"
             android:layout_marginVertical="8dp"
             android:layout_marginHorizontal="16dp"
-            android:background="?android:selectableItemBackground"
             app:tint="@color/orange" />
 
     </LinearLayout>

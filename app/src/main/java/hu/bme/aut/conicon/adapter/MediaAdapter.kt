@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -87,6 +88,9 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
                 postReference.update("likes", FieldValue.arrayRemove(uid))
             } else {
                 holder.btnLike.setImageResource(R.drawable.ic_heart_filled)
+
+                val animation = AnimationUtils.loadAnimation(context, R.anim.anim_like_button)
+                holder.btnLike.startAnimation(animation)
 
                 mediaElement.likes.add(uid)
                 postReference.update("likes", FieldValue.arrayUnion(uid))
