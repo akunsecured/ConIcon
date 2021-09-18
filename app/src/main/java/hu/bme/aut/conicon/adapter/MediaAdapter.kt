@@ -60,8 +60,14 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
         } else {
             holder.ivProfilePicture.setImageDrawable(context.getDrawable(R.drawable.ic_profile))
         }
+        holder.ivProfilePicture.setOnClickListener {
+            listener.viewProfile(mediaElement.ownerID)
+        }
 
         holder.tvUsername.text = linkedUser.username
+        holder.tvUsername.setOnClickListener {
+            listener.viewProfile(mediaElement.ownerID)
+        }
 
         holder.tvPlace.visibility = View.GONE
 
@@ -115,6 +121,7 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
 
     interface MediaItemListener {
         fun viewLikes(likes: MutableList<String>)
+        fun viewProfile(userID: String)
     }
 
     override fun getItemCount(): Int = mediaElements.size

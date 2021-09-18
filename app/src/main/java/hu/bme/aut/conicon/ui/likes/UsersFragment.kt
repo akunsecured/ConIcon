@@ -85,6 +85,12 @@ class UsersFragment(private val userIDs: MutableList<String>, private val appBar
     }
 
     override fun onUserClicked(position: Int) {
-        navigator?.add(ProfileFragment(userElements[position].id))
+        navigator?.add(
+                ProfileFragment(userElements[position].id),
+                R.anim.from_right_to_left_in,
+                R.anim.from_right_to_left_out,
+                R.anim.from_left_to_right_in,
+                R.anim.from_left_to_right_out
+        )
     }
 }

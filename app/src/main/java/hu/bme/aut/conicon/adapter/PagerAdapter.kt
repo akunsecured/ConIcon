@@ -19,7 +19,7 @@ class PagerAdapter(fragmentActivity: FragmentActivity, private val numOfTabs: In
 
         val homeFragment = HomeFragment()
         val postUploadFragment = PostUploadFragment()
-        val profileFragment = ProfileFragment(auth.currentUser?.uid.toString())
+        val profileFragment = ProfileFragment(auth.currentUser?.uid.toString(), false)
 
         return when (position) {
             0 -> {

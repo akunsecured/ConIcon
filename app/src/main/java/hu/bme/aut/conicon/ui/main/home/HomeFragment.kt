@@ -15,6 +15,7 @@ import hu.bme.aut.conicon.adapter.MediaAdapter
 import hu.bme.aut.conicon.databinding.FragmentHomeBinding
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.likes.UsersFragment
+import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
 
 /**
  * This is the view where the posts will be shown
@@ -98,6 +99,16 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
     override fun viewLikes(likes: MutableList<String>) {
         navigator?.add(
                 UsersFragment(likes, requireContext().getString(R.string.likes)),
+                R.anim.from_right_to_left_in,
+                R.anim.from_right_to_left_out,
+                R.anim.from_left_to_right_in,
+                R.anim.from_left_to_right_out
+        )
+    }
+
+    override fun viewProfile(userID: String) {
+        navigator?.add(
+                ProfileFragment(userID),
                 R.anim.from_right_to_left_in,
                 R.anim.from_right_to_left_out,
                 R.anim.from_left_to_right_in,

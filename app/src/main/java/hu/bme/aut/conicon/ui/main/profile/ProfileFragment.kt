@@ -9,6 +9,8 @@ import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import co.zsmb.rainbowcake.navigation.navigator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
@@ -20,7 +22,7 @@ import hu.bme.aut.conicon.ui.login.LoginFragment
  * This is the view of the current user's profile
  * Here can the user change profile picture and edit its profile
  */
-class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
+class ProfileFragment(private val userID: String, private val isBackEnabled: Boolean = true) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var user: AppUser
@@ -34,6 +36,7 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
         super.onViewCreated(view, savedInstanceState)
 
         val auth = FirebaseAuth.getInstance()
+        val uid = auth.currentUser?.uid.toString()
 
         viewModel.getUserData(userID)
 
@@ -41,17 +44,10 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
             viewModel.getUserData(userID)
         }
 
-        binding.llFollowers.setOnClickListener {
-            navigator?.add(UsersFragment(user.followers, requireContext().getString(R.string.followers)))
+        binding.ivBack.setOnClickListener {
+            navigator?.pop()
         }
 
-        binding.llFollowing.setOnClickListener {
-            navigator?.add(UsersFragment(user.following, requireContext().getString(R.string.following)))
-        }
-
-        // If it is the logged-in user's profile, the application shows a menu icon
-        // that's click event will be a popup menu that includes the sign out option
-        binding.ivMenu.visibility = if (auth.currentUser?.uid == userID) View.VISIBLE else View.GONE
         binding.ivMenu.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
             popupMenu.setOnMenuItemClickListener { item ->
@@ -59,11 +55,11 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
                     R.id.nav_sign_out -> {
                         auth.signOut()
                         navigator?.replace(
-                            LoginFragment(),
-                            R.anim.from_down_to_up_in,
-                            R.anim.from_down_to_up_out,
-                            R.anim.from_up_to_down_in,
-                            R.anim.from_up_to_down_out
+                                LoginFragment(),
+                                R.anim.from_down_to_up_in,
+                                R.anim.from_down_to_up_out,
+                                R.anim.from_up_to_down_in,
+                                R.anim.from_up_to_down_out
                         )
                         true
                     }
@@ -73,6 +69,69 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
 
             popupMenu.inflate(R.menu.profile_menu)
             popupMenu.show()
+        }
+
+        binding.llFollowers.setOnClickListener {
+            navigator?.add(
+                    UsersFragment(user.followers, requireContext().getString(R.string.followers)),
+                    R.anim.from_right_to_left_in,
+                    R.anim.from_right_to_left_out,
+                    R.anim.from_left_to_right_in,
+                    R.anim.from_left_to_right_out
+            )
+        }
+
+        binding.llFollowing.setOnClickListener {
+            navigator?.add(
+                    UsersFragment(user.following, requireContext().getString(R.string.following)),
+                    R.anim.from_right_to_left_in,
+                    R.anim.from_right_to_left_out,
+                    R.anim.from_left_to_right_in,
+                    R.anim.from_left_to_right_out
+            )
+        }
+
+        val userCollection = FirebaseFirestore.getInstance().collection("users")
+        binding.btnFollow.setOnClickListener {
+            userCollection.document(userID).update("followers", FieldValue.arrayUnion(uid))
+            userCollection.document(uid).update("following", FieldValue.arrayUnion(userID))
+            user.followers.add(uid)
+            updateUI(user)
+        }
+
+        binding.btnFollowOut.setOnClickListener {
+            userCollection.document(userID).update("followers", FieldValue.arrayRemove(uid))
+            userCollection.document(uid).update("following", FieldValue.arrayRemove(userID))
+            user.followers.remove(uid)
+            updateUI(user)
+        }
+
+        val conversationCollection = FirebaseFirestore.getInstance().collection("conversation")
+        binding.btnMessage.setOnClickListener {
+            /*
+            val listOfUsers = listOf(uid, userID)
+            val query = conversationCollection.whereArrayContains("participants", listOfUsers).limit(1)
+            query.get().addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    val newConversation = conversationCollection.document()
+                    conversationCollection.add(
+                            hashMapOf(
+                                    "id" to newConversation.id,
+                                    "participants" to listOfUsers
+                            )
+                    )
+                } else {
+
+                }
+            }.addOnFailureListener { ex ->
+                Toast.makeText(requireContext(), ex.message.toString(), Toast.LENGTH_SHORT).show()
+            }*/
+        }
+
+        if (isBackEnabled) {
+            binding.ivBack.visibility = View.VISIBLE
+        } else {
+            binding.ivBack.visibility = View.GONE
         }
     }
 
@@ -89,6 +148,26 @@ class ProfileFragment(private val userID: String) : RainbowCakeFragment<ProfileV
 
         binding.tvNumOfFollowers.text = user.followers.size.toString()
         binding.tvNumOfFollowing.text = user.following.size.toString()
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        if (user.id == uid) {
+            binding.ivMenu.visibility = if (isBackEnabled) View.GONE else View.VISIBLE
+
+            binding.btnEditProfile.visibility = View.VISIBLE
+            binding.llFollowedButtons.visibility = View.GONE
+            binding.btnFollow.visibility = View.GONE
+        } else {
+            binding.btnEditProfile.visibility = View.GONE
+
+            if (user.followers.contains(uid)) {
+                binding.llFollowedButtons.visibility = View.VISIBLE
+                binding.btnFollow.visibility = View.GONE
+            } else {
+                binding.llFollowedButtons.visibility = View.GONE
+                binding.btnFollow.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun getViewResource(): Int = R.layout.fragment_profile
