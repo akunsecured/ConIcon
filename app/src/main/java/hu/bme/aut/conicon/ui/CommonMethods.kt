@@ -147,10 +147,30 @@ class CommonMethods {
                 SimpleDateFormat("EEEE").format(date)
             }
             diff in 604800001..31556952000 -> {
-                SimpleDateFormat("MMM. dd").format(date)
+                SimpleDateFormat("MMMM d").format(date)
             }
             else -> {
-                SimpleDateFormat("yyyy. MMM. dd.").format(date)
+                SimpleDateFormat("MMMM d, yyyy").format(date)
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun formatConversationDate(date: Long) : String {
+        val diff = Date().time - date
+
+        return when {
+            diff < 3599999 -> {
+                SimpleDateFormat("m").format(diff).plus("m")
+            }
+            diff in 3600000..86399999 -> {
+                SimpleDateFormat("H").format(diff).plus("h")
+            }
+            diff in 86400000..604799999 -> {
+                "${diff / 86400000}d"
+            }
+            else -> {
+                "${diff / 604800000}w"
             }
         }
     }
