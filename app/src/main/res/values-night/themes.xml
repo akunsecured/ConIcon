@@ -19,4 +19,5 @@
     <color name="google_button_background">@color/light_gray</color>
     <color name="orange">@color/dark_orange</color>
     <color name="icon_background">#FFFFFF</color>
+    <color name="light_gray">@color/gray</color>
 </resources>

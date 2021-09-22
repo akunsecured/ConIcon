@@ -17,6 +17,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.ConversationAdapter
 import hu.bme.aut.conicon.databinding.FragmentConversationsBinding
 import hu.bme.aut.conicon.network.model.ConversationElement
+import hu.bme.aut.conicon.ui.chat.ChatFragment
 
 class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, ConversationsViewModel>(), ConversationAdapter.ConversationItemListener {
 
@@ -42,14 +43,13 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
 
     private fun initRecyclerView() {
         val query = conversationCollection
-                .whereArrayContains("participants", auth.currentUser?.uid.toString())
-                .orderBy("lastMessage.sentTime")
+                .whereEqualTo("participantIDs.${auth.currentUser?.uid.toString()}", true)
+                .orderBy("lastMessage.time")
         val options = FirestoreRecyclerOptions.Builder<ConversationElement>()
                 .setQuery(query, ConversationElement::class.java)
                 .build()
         adapter = ConversationAdapter(this, options)
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        layoutManager.stackFromEnd = true
         binding.rvConversations.layoutManager = layoutManager
         binding.rvConversations.adapter = adapter
     }
@@ -94,7 +94,16 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
 
     override fun onConversationItemClicked(position: Int) {
         // TODO: Open chat
-        Toast.makeText(requireContext(), adapter.conversationElements[position].id, Toast.LENGTH_SHORT).show()
+        val conversationElement = adapter.snapshots[position]
+        var userID = ""
+        for (key in conversationElement.participantIDs.keys) {
+            if (key != auth.currentUser?.uid.toString()) {
+                userID = key
+                break
+            }
+        }
+
+        navigator?.add(ChatFragment(conversationElement.id, userID))
     }
 
     override fun onConversationSizeChange() {

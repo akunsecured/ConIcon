@@ -53,7 +53,13 @@ class ConversationAdapter(
         val auth = FirebaseAuth.getInstance()
         val uid = auth.currentUser?.uid.toString()
 
-        val userID = model.participantIDs.find { it != uid }.toString()
+        var userID = ""
+        for (key in model.participantIDs.keys) {
+            if (key != uid) {
+                userID = key
+                break
+            }
+        }
 
         val collection = FirebaseFirestore.getInstance().collection("users")
         collection.document(userID).get().addOnSuccessListener { document ->
@@ -71,10 +77,15 @@ class ConversationAdapter(
 
         val lastMessage = model.lastMessage!!
         val lastMessageText =
-                if (lastMessage.sentBy == uid) "You: ".plus(lastMessage.message)
-                else lastMessage.message
+                if (lastMessage.sentBy == uid) "You: ".plus(
+                        if (lastMessage.isItMedia) "Photo has been sent"
+                        else lastMessage.message
+                )
+                else
+                    if (lastMessage.isItMedia) "Photo has been sent"
+                    else lastMessage.message
         holder.tvLastMessage.text = lastMessageText
-        holder.tvLastMessageDate.text = CommonMethods().formatConversationDate(lastMessage.sentTime)
+        holder.tvLastMessageDate.text = CommonMethods().formatConversationDate(lastMessage.time!!.time)
     }
 
     interface ConversationItemListener {

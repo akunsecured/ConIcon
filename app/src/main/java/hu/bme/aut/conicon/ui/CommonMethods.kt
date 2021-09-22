@@ -140,13 +140,13 @@ class CommonMethods {
         val diff = Date().time - date
 
         return when {
-            diff < 86400001 -> {
+            diff < 86400000 -> {
                 SimpleDateFormat("HH:mm").format(date)
             }
-            diff in 86400001..604800000 -> {
+            diff in 86400000..604799999 -> {
                 SimpleDateFormat("EEEE").format(date)
             }
-            diff in 604800001..31556952000 -> {
+            diff in 604800000..31556951999 -> {
                 SimpleDateFormat("MMMM d").format(date)
             }
             else -> {
@@ -160,7 +160,7 @@ class CommonMethods {
         val diff = Date().time - date
 
         return when {
-            diff < 3599999 -> {
+            diff < 3600000 -> {
                 SimpleDateFormat("m").format(diff).plus("m")
             }
             diff in 3600000..86399999 -> {
@@ -171,6 +171,26 @@ class CommonMethods {
             }
             else -> {
                 "${diff / 604800000}w"
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun formatMessageDate(date: Long) : String {
+        val diff = Date().time - date
+
+        return when {
+            diff < 86400000 -> {
+                SimpleDateFormat("HH:mm").format(date)
+            }
+            diff in 86400000..604799999 -> {
+                SimpleDateFormat("EEEE, HH:mm").format(date)
+            }
+            diff in 604800000..31556951999 -> {
+                SimpleDateFormat("MMMM d, HH:mm").format(date)
+            }
+            else -> {
+                SimpleDateFormat("MMMM d, yyyy, HH:mm").format(date)
             }
         }
     }

@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.chat.ChatFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
 
@@ -106,26 +107,8 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             updateUI(user)
         }
 
-        val conversationCollection = FirebaseFirestore.getInstance().collection("conversation")
         binding.btnMessage.setOnClickListener {
-            /*
-            val listOfUsers = listOf(uid, userID)
-            val query = conversationCollection.whereArrayContains("participants", listOfUsers).limit(1)
-            query.get().addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.isEmpty) {
-                    val newConversation = conversationCollection.document()
-                    conversationCollection.add(
-                            hashMapOf(
-                                    "id" to newConversation.id,
-                                    "participants" to listOfUsers
-                            )
-                    )
-                } else {
-
-                }
-            }.addOnFailureListener { ex ->
-                Toast.makeText(requireContext(), ex.message.toString(), Toast.LENGTH_SHORT).show()
-            }*/
+            viewModel.getOrCreateConversationID(userID)
         }
 
         if (isBackEnabled) {
@@ -200,6 +183,11 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
 
             NoUserWithThisUID -> {
                 // TODO: Error handling
+                viewModel.init()
+            }
+
+            is ConversationReady -> {
+                navigator?.add(ChatFragment(viewState.conversationID, viewState.userID))
                 viewModel.init()
             }
         }.exhaustive

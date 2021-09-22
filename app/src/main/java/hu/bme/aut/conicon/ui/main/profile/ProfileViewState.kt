@@ -13,3 +13,5 @@ data class DatabaseError(val message: String) : ProfileViewState()
 data class UserDataReady(val user: AppUser) : ProfileViewState()
 
 object NoUserWithThisUID : ProfileViewState()
+
+data class ConversationReady(val conversationID: String, val userID: String) : ProfileViewState()

@@ -5,6 +5,8 @@ import co.zsmb.rainbowcake.dagger.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import hu.bme.aut.conicon.ui.chat.ChatViewModel
+import hu.bme.aut.conicon.ui.conversations.ConversationsViewModel
 import hu.bme.aut.conicon.ui.likes.UsersViewModel
 import hu.bme.aut.conicon.ui.login.LoginViewModel
 import hu.bme.aut.conicon.ui.main.MainViewModel
@@ -55,4 +57,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UsersViewModel::class)
     abstract fun bindUsersViewModel(usersViewModel: UsersViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConversationsViewModel::class)
+    abstract fun bindConversationsViewModel(conversationsViewModel: ConversationsViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChatViewModel::class)
+    abstract fun bindChatViewModel(chatViewModel: ChatViewModel) : ViewModel
 }

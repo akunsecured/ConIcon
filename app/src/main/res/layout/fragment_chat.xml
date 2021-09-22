@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -37,10 +37,11 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/tvUsername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="12dp"
-                    android:text="@string/chats"
+                    android:text="@string/username"
                     android:textColor="@color/orange"
                     android:textSize="24sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -61,29 +62,62 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvConversations"
+        android:id="@+id/rvMessages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:listitem="@layout/conversation_item"
-        android:layout_below="@id/appBarLayout" />
+        android:layout_below="@id/appBarLayout"
+        android:layout_above="@id/llChatInput"/>
 
-    <ProgressBar
-        android:id="@+id/pbProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateTint="@color/orange"
-        android:layout_centerInParent="true" />
-
-    <TextView
-        android:id="@+id/tvNoConversations"
+    <LinearLayout
+        android:id="@+id/llChatInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="You have not chatted with anyone yet."
-        android:textSize="18sp"
-        android:layout_below="@id/appBarLayout"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="48dp" />
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_background"
+            android:paddingVertical="8dp"
+            android:layout_margin="8dp"
+            android:weightSum="9">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/type_to_message"
+                android:textSize="20sp"
+                android:layout_marginStart="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivSend"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="8"/>
+
+            <ImageView
+                android:id="@+id/ivSelectImage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_camera"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ivSend"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_send"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
