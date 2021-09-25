@@ -18,6 +18,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.PagerAdapter
@@ -56,6 +57,7 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
     override fun onResume() {
         super.onResume()
 
+        checkOnlineStatus()
         checkIfEmailIsVerified()
     }
 
@@ -69,7 +71,7 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         val connectedRef = Firebase.database.getReference(".info/connected")
         connectedRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val connected = snapshot.getValue(Boolean::class.java) ?: false
+                val connected = snapshot.getValue<Boolean>() ?: false
                 val tvConnectionInfo = binding.tvConnectionInfo
 
                 val alpha: Float = if (connected) 0f else 1f

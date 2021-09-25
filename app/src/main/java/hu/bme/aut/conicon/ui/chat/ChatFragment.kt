@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -194,14 +195,15 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
                                     "lastMessage", newMessage
                             )
                         }.addOnFailureListener { ex ->
-
+                            Toast.makeText(requireContext(), ex.message.toString(), Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener { ex ->
-
+                        Toast.makeText(requireContext(), ex.message.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val ex = result?.error
+                Toast.makeText(requireContext(), ex?.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
     }

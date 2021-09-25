@@ -112,7 +112,7 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
             holder.tvDetails.visibility = View.GONE
         }
 
-        holder.tvDate.text = CommonMethods().formatDate(mediaElement.date)
+        holder.tvDate.text = CommonMethods().formatPostDate(mediaElement.date)
     }
 
     private fun checkLikes(holder: MediaViewHolder, mediaElement: MediaElement) {

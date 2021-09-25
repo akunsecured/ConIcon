@@ -49,7 +49,7 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
                 .setQuery(query, ConversationElement::class.java)
                 .build()
         adapter = ConversationAdapter(this, options)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.rvConversations.layoutManager = layoutManager
         binding.rvConversations.adapter = adapter
     }
@@ -117,8 +117,8 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
         adapter.startListening()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         adapter.stopListening()
     }
 }

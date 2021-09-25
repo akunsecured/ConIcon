@@ -132,11 +132,11 @@ class CommonMethods {
     }
 
     /**
-     * This method formats the given date
+     * This method formats properly the given post date
      * @param date The Long form of the date to format
      */
     @SuppressLint("SimpleDateFormat")
-    fun formatDate(date: Long) : String {
+    fun formatPostDate(date: Long) : String {
         val diff = Date().time - date
 
         return when {
@@ -155,12 +155,19 @@ class CommonMethods {
         }
     }
 
+    /**
+     * This method formats properly the given conversation date
+     * @param date The Long form of the date to format
+     */
     @SuppressLint("SimpleDateFormat")
     fun formatConversationDate(date: Long) : String {
         val diff = Date().time - date
 
         return when {
-            diff < 3600000 -> {
+            diff < 60000 -> {
+                "now"
+            }
+            diff in 60000..3599999 -> {
                 SimpleDateFormat("m").format(diff).plus("m")
             }
             diff in 3600000..86399999 -> {
@@ -175,6 +182,10 @@ class CommonMethods {
         }
     }
 
+    /**
+     * This method formats properly the given message date
+     * @param date The Long form of the date to format
+     */
     @SuppressLint("SimpleDateFormat")
     fun formatMessageDate(date: Long) : String {
         val diff = Date().time - date

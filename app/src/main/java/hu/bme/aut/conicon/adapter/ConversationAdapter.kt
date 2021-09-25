@@ -85,7 +85,9 @@ class ConversationAdapter(
                     if (lastMessage.isItMedia) "Photo has been sent"
                     else lastMessage.message
         holder.tvLastMessage.text = lastMessageText
-        holder.tvLastMessageDate.text = CommonMethods().formatConversationDate(lastMessage.time!!.time)
+        holder.tvLastMessageDate.text =
+                if (lastMessage.time != null) CommonMethods().formatConversationDate(lastMessage.time!!.time)
+                else CommonMethods().formatConversationDate(lastMessage.sentFromClient)
     }
 
     interface ConversationItemListener {

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -32,6 +33,8 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
         var tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
         var tvDate: TextView = itemView.findViewById(R.id.tvDate)
         var ivMessage: ImageView = itemView.findViewById(R.id.ivMessage)
+        var cvImage: CardView = itemView.findViewById(R.id.cvImage)
+        var ivPending: ImageView = itemView.findViewById(R.id.ivPending)
 
         init {
             itemView.setOnLongClickListener(this)
@@ -48,6 +51,7 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
         var tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
         var tvDate: TextView = itemView.findViewById(R.id.tvDate)
         var ivMessage: ImageView = itemView.findViewById(R.id.ivMessage)
+        var cvImage: CardView = itemView.findViewById(R.id.cvImage)
 
         init {
             itemView.setOnLongClickListener(this)
@@ -79,13 +83,16 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
         if (holder is SentViewHolder) {
             if (model.isItMedia && model.mediaLink != null) {
                 holder.tvMessage.visibility = View.GONE
-                holder.ivMessage.visibility = View.VISIBLE
+                holder.cvImage.visibility = View.VISIBLE
                 Picasso.get().load(model.mediaLink).into(holder.ivMessage)
             } else {
                 holder.tvMessage.visibility = View.VISIBLE
-                holder.ivMessage.visibility = View.GONE
+                holder.cvImage.visibility = View.GONE
                 holder.tvMessage.text = model.message
             }
+            holder.ivPending.visibility =
+                    if (model.time != null) View.GONE
+                    else View.VISIBLE
             holder.tvDate.text =
                     if(model.time != null) CommonMethods().formatMessageDate(model.time!!.time)
                     else CommonMethods().formatMessageDate(model.sentFromClient)
@@ -95,11 +102,11 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
                     else CommonMethods().formatMessageDate(model.sentFromClient)
             if (model.isItMedia && model.mediaLink != null) {
                 holder.tvMessage.visibility = View.GONE
-                holder.ivMessage.visibility = View.VISIBLE
+                holder.cvImage.visibility = View.VISIBLE
                 Picasso.get().load(model.mediaLink).into(holder.ivMessage)
             } else {
                 holder.tvMessage.visibility = View.VISIBLE
-                holder.ivMessage.visibility = View.GONE
+                holder.cvImage.visibility = View.GONE
                 holder.tvMessage.text = model.message
             }
         }
