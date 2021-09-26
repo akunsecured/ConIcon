@@ -4,8 +4,10 @@ import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.ConversationElement
+import hu.bme.aut.conicon.network.model.MediaElement
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,6 +15,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
 
 ) : RainbowCakeViewModel<ProfileViewState>(Initialize) {
+    private val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
     fun init() {
         viewState = Initialize
     }
@@ -45,9 +49,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getOrCreateConversationID(userID: String) = viewModelScope.launch {
-        val auth = FirebaseAuth.getInstance()
-        val uid = auth.currentUser?.uid.toString()
-
         val conversationCollection = FirebaseFirestore.getInstance().collection("conversations")
         val query = conversationCollection
                 .whereEqualTo("participantIDs.${userID}", true)
@@ -74,6 +75,34 @@ class ProfileViewModel @Inject constructor(
             }
         }.addOnFailureListener { ex ->
             viewState = DatabaseError(ex.message.toString())
+        }
+    }
+
+    fun getUserPosts(postIDs: MutableList<String>) = viewModelScope.launch {
+        val userPosts = mutableListOf<MediaElement>()
+        if (postIDs.isEmpty()) {
+            viewState = UserPostsReady(userPosts)
+        } else {
+
+            val postCollection = FirebaseFirestore.getInstance().collection("posts")
+            val query = postCollection.whereEqualTo("ownerID", uid)
+                    .orderBy("date", Query.Direction.ASCENDING)
+            query.get().addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    for (document in querySnapshot.documents) {
+                        val userPost = document.toObject(MediaElement::class.java)
+                        if (userPost != null) {
+                            userPosts.add(
+                                userPost
+                            )
+                        }
+                    }
+                }
+
+                viewState = UserPostsReady(userPosts)
+            }.addOnFailureListener { ex ->
+                viewState = DatabaseError(ex.message.toString())
+            }
         }
     }
 }

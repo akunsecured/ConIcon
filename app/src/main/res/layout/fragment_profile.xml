@@ -230,11 +230,22 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvNoPosts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_user_posts"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:layout_margin="56dp"
+                    android:layout_below="@+id/vProfileEditButton"
+                    android:visibility="gone" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvUserPosts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/vProfileEditButton"
+                    android:layout_below="@id/tvNoPosts"
                     android:layout_marginVertical="6dp" />
 
                 <View

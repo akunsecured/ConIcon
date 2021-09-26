@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.adapter.UserPostAdapter
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.chat.ChatFragment
@@ -23,10 +25,11 @@ import hu.bme.aut.conicon.ui.login.LoginFragment
  * This is the view of the current user's profile
  * Here can the user change profile picture and edit its profile
  */
-class ProfileFragment(private val userID: String, private val isBackEnabled: Boolean = true) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>() {
+class ProfileFragment(private val userID: String, private val isBackEnabled: Boolean = true) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(), UserPostAdapter.UserPostItemClickListener {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var user: AppUser
+    private lateinit var adapter: UserPostAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -35,6 +38,8 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initRecyclerView()
 
         val auth = FirebaseAuth.getInstance()
         val uid = auth.currentUser?.uid.toString()
@@ -153,6 +158,13 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
         }
     }
 
+    private fun initRecyclerView() {
+        adapter = UserPostAdapter(this)
+        val gridLayoutManager = GridLayoutManager(requireContext(), 3)
+        binding.rvUserPosts.layoutManager = gridLayoutManager
+        binding.rvUserPosts.adapter = adapter
+    }
+
     override fun getViewResource(): Int = R.layout.fragment_profile
 
     override fun provideViewModel(): ProfileViewModel = getViewModelFromFactory()
@@ -178,7 +190,7 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             is UserDataReady -> {
                 user = viewState.user
                 updateUI(user)
-                viewModel.init()
+                viewModel.getUserPosts(user.posts)
             }
 
             NoUserWithThisUID -> {
@@ -190,6 +202,24 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
                 navigator?.add(ChatFragment(viewState.conversationID, viewState.userID))
                 viewModel.init()
             }
+
+            is UserPostsReady -> {
+                val posts = viewState.userPosts
+
+                if (posts.size > 0) {
+                    binding.tvNoPosts.visibility = View.GONE
+                    adapter.update(posts)
+                } else {
+                    adapter.update(mutableListOf())
+                    binding.tvNoPosts.visibility = View.VISIBLE
+                }
+
+                viewModel.init()
+            }
         }.exhaustive
+    }
+
+    override fun onUserPostItemClicked(position: Int) {
+
     }
 }

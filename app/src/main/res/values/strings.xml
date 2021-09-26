@@ -28,5 +28,6 @@
     <string name="follow">Follow</string>
     <string name="message">Message</string>
     <string name="chats">Chats</string>
-    <string name="type_to_message">Message...</string>
+    <string name="type_to_message">Message…</string>
+    <string name="no_user_posts">When you share photos and videos, they\'ll appear here</string>
 </resources>
