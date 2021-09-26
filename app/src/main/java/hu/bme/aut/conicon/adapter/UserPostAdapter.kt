@@ -46,7 +46,7 @@ class UserPostAdapter(private val listener: UserPostItemClickListener) : Recycle
     override fun getItemCount(): Int = userPostElements.size
 
     fun update(posts: MutableList<MediaElement>) {
-        this.userPostElements = posts
+        this.userPostElements = posts.asReversed()
         notifyDataSetChanged()
     }
 }

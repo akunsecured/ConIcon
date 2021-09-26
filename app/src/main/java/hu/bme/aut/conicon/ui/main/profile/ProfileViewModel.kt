@@ -85,7 +85,7 @@ class ProfileViewModel @Inject constructor(
         } else {
 
             val postCollection = FirebaseFirestore.getInstance().collection("posts")
-            val query = postCollection.whereEqualTo("ownerID", uid)
+            val query = postCollection.whereIn("id", postIDs)
                     .orderBy("date", Query.Direction.ASCENDING)
             query.get().addOnSuccessListener { querySnapshot ->
                 if (!querySnapshot.isEmpty) {
