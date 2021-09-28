@@ -1,6 +1,7 @@
 package hu.bme.aut.conicon.ui.editprofile
 
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -66,7 +67,12 @@ class EditProfileFragment(private val user: AppUser) : RainbowCakeFragment<EditP
         }
 
         binding.btnDeleteProfile.setOnClickListener {
-            viewModel.deleteProfile(user)
+            val builder = AlertDialog.Builder(requireContext())
+                    .setMessage("Do you want to delete the profile?")
+                    .setPositiveButton("Yes") { _, _ -> viewModel.deleteProfile(user) }
+                    .setNegativeButton("No") { _, _ -> }
+            val dialog = builder.create()
+            dialog.show()
         }
     }
 

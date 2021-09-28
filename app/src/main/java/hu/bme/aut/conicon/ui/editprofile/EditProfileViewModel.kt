@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import hu.bme.aut.conicon.network.model.AppUser
@@ -85,13 +86,26 @@ class EditProfileViewModel @Inject constructor(
         delay(500)
 
         val postCollection = FirebaseFirestore.getInstance().collection("posts")
+        // Removing the user's posts
         if (user.posts.isNotEmpty()) {
             for (postID in user.posts) {
                 postCollection.document(postID).delete()
             }
         }
 
+        // Removing the likes of the user
+        val postQuery = postCollection.whereArrayContains("likes", user.id)
+        postQuery.get().addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                for (document in querySnapshot) {
+                    val id = document.id
+                    postCollection.document(id).update("likes", FieldValue.arrayRemove(user.id))
+                }
+            }
+        }
+
         val conversationCollection = FirebaseFirestore.getInstance().collection("conversations")
+        // Removing the conversations where the user was a participant
         val query = conversationCollection.whereEqualTo("participantIDs.${user.id}", true)
         query.get().addOnSuccessListener { querySnapshot ->
             if (!querySnapshot.isEmpty) {
@@ -105,6 +119,33 @@ class EditProfileViewModel @Inject constructor(
         }
 
         val userCollection = FirebaseFirestore.getInstance().collection("users")
+        // Removing the user from other users' followers
+        val queryFollowers = userCollection.whereArrayContains("followers", user.id)
+        queryFollowers.get().addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                for (document in querySnapshot) {
+                    val id = document.id
+                    userCollection.document(id).update("followers", FieldValue.arrayRemove(user.id))
+                }
+            }
+        }.addOnFailureListener { ex ->
+            viewState = FirebaseError(ex.message.toString())
+        }
+
+        // Removing the user from other users' following
+        val queryFollowing = userCollection.whereArrayContains("following", user.id)
+        queryFollowing.get().addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                for (document in querySnapshot) {
+                    val id = document.id
+                    userCollection.document(id).update("following", FieldValue.arrayRemove(user.id))
+                }
+            }
+        }.addOnFailureListener { ex ->
+            viewState = FirebaseError(ex.message.toString())
+        }
+
+        // Removing the user from the database
         userCollection.document(user.id).delete().addOnSuccessListener {
             FirebaseAuth.getInstance().currentUser?.delete()?.addOnSuccessListener {
                 FirebaseAuth.getInstance().signOut()
