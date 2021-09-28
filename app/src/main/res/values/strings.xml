@@ -31,4 +31,6 @@
     <string name="type_to_message">Message…</string>
     <string name="no_user_posts">When you share photos and videos, they\'ll appear here</string>
     <string name="post">Post</string>
+    <string name="edit_profile_picture">Edit profile picture</string>
+    <string name="delete_profile">Delete profile</string>
 </resources>

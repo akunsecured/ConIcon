@@ -19,6 +19,7 @@ import hu.bme.aut.conicon.adapter.UserPostAdapter
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.chat.ChatFragment
+import hu.bme.aut.conicon.ui.editprofile.EditProfileFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
 import hu.bme.aut.conicon.ui.post.PostFragment
@@ -145,6 +146,17 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             binding.ivMenu.visibility = if (isBackEnabled) View.GONE else View.VISIBLE
 
             binding.btnEditProfile.visibility = View.VISIBLE
+
+            binding.btnEditProfile.setOnClickListener {
+                navigator?.add(
+                        EditProfileFragment(user),
+                        R.anim.from_down_to_up_in,
+                        R.anim.from_down_to_up_out,
+                        R.anim.from_up_to_down_in,
+                        R.anim.from_up_to_down_out
+                )
+            }
+
             binding.llFollowedButtons.visibility = View.GONE
             binding.btnFollow.visibility = View.GONE
         } else {
