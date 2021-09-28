@@ -21,6 +21,7 @@ import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.chat.ChatFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
+import hu.bme.aut.conicon.ui.post.PostFragment
 
 /**
  * This is the view of the current user's profile
@@ -221,6 +222,8 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
     }
 
     override fun onUserPostItemClicked(position: Int) {
-
+        navigator?.add(
+                PostFragment(adapter.userPostElements[position])
+        )
     }
 }

@@ -30,4 +30,5 @@
     <string name="chats">Chats</string>
     <string name="type_to_message">Message…</string>
     <string name="no_user_posts">When you share photos and videos, they\'ll appear here</string>
+    <string name="post">Post</string>
 </resources>

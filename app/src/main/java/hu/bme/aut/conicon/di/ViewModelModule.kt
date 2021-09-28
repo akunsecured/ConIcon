@@ -13,6 +13,7 @@ import hu.bme.aut.conicon.ui.main.MainViewModel
 import hu.bme.aut.conicon.ui.main.home.HomeViewModel
 import hu.bme.aut.conicon.ui.main.postupload.PostUploadViewModel
 import hu.bme.aut.conicon.ui.main.profile.ProfileViewModel
+import hu.bme.aut.conicon.ui.post.PostViewModel
 import hu.bme.aut.conicon.ui.setusername.SetUsernameViewModel
 import hu.bme.aut.conicon.ui.signup.SignUpViewModel
 
@@ -67,4 +68,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ChatViewModel::class)
     abstract fun bindChatViewModel(chatViewModel: ChatViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PostViewModel::class)
+    abstract fun bindPostViewModel(postViewModel: PostViewModel) : ViewModel
 }
