@@ -24,7 +24,7 @@ class HomeViewModel @Inject constructor(
 
         val postCollection = FirebaseFirestore.getInstance().collection("posts")
         // val followedUsersPostsQuery = postCollection.whereIn("ownerID", following).orderBy("date", Query.Direction.ASCENDING)
-        val query = postCollection.orderBy("date", Query.Direction.ASCENDING)
+        val query = postCollection.orderBy("date", Query.Direction.DESCENDING)
         query.get().addOnSuccessListener { querySnapshot ->
             if (!querySnapshot.isEmpty) {
                 for (document in querySnapshot.documents) {

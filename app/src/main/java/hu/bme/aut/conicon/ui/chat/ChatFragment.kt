@@ -42,6 +42,8 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getProfileData(userID)
+
         initRecyclerView()
 
         binding.ivBack.setOnClickListener {
@@ -142,6 +144,21 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
 
             Loading -> {
 
+            }
+
+            is UserDataReady -> {
+                binding.tvUsername.text = viewState.user.username
+                viewModel.init()
+            }
+
+            is FirebaseError -> {
+                Toast.makeText(requireContext(), viewState.message, Toast.LENGTH_SHORT).show()
+                viewModel.init()
+            }
+
+            UserNotFound -> {
+                Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
+                viewModel.init()
             }
         }.exhaustive
     }

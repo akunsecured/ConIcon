@@ -62,8 +62,7 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
 
     private fun initRecyclerView() {
         adapter = MediaAdapter(requireContext(), this)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
-        layoutManager.stackFromEnd = true
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvPosts.layoutManager = layoutManager
         binding.rvPosts.adapter = adapter
     }

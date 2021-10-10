@@ -13,6 +13,7 @@ import co.zsmb.rainbowcake.navigation.navigator
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.ConversationAdapter
 import hu.bme.aut.conicon.databinding.FragmentConversationsBinding
@@ -44,12 +45,12 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
     private fun initRecyclerView() {
         val query = conversationCollection
                 .whereEqualTo("participantIDs.${auth.currentUser?.uid.toString()}", true)
-                .orderBy("lastMessage.time")
+                .orderBy("lastMessage.time", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<ConversationElement>()
                 .setQuery(query, ConversationElement::class.java)
                 .build()
         adapter = ConversationAdapter(this, options)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.rvConversations.layoutManager = layoutManager
         binding.rvConversations.adapter = adapter
     }
@@ -61,18 +62,11 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
     override fun render(viewState: ConversationsViewState) {
         when (viewState) {
             Initialize -> {
-                /*
-                binding.swipeRefreshLayout.isRefreshing = false
-                binding.swipeRefreshLayout.visibility = View.VISIBLE*/
                 binding.pbProgressBar.visibility = View.GONE
             }
 
             Loading -> {
-                /*
-                binding.swipeRefreshLayout.visibility =
-                        if (binding.swipeRefreshLayout.isRefreshing) View.VISIBLE else View.GONE
-                binding.pbProgressBar.visibility =
-                        if (binding.swipeRefreshLayout.isRefreshing) View.GONE else View.VISIBLE*/
+
             }
 
             is FirebaseError -> {
@@ -93,7 +87,6 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
     }
 
     override fun onConversationItemClicked(position: Int) {
-        // TODO: Open chat
         val conversationElement = adapter.snapshots[position]
         var userID = ""
         for (key in conversationElement.participantIDs.keys) {

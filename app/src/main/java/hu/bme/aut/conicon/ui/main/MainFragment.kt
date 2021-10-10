@@ -68,6 +68,7 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
      * disappear as soon as the user has got internet connection again.
      */
     private fun checkOnlineStatus() {
+        /*
         val connectedRef = Firebase.database.getReference(".info/connected")
         connectedRef.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -109,6 +110,8 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
             }
 
         })
+
+         */
     }
 
     /**
