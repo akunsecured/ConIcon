@@ -45,6 +45,7 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
                 } else {
                     viewModel.uploadImage(filePath!!)
                 }
+                binding.ivSend.isEnabled = false
             }
         }
     }
@@ -68,6 +69,7 @@ class PostUploadFragment : RainbowCakeFragment<PostUploadViewState, PostUploadVi
             Initialize -> {
                 binding.pbProgressBar.visibility = View.GONE
                 binding.btnSelectImage.isEnabled = true
+                binding.ivSend.isEnabled = true
             }
 
             Loading -> {
