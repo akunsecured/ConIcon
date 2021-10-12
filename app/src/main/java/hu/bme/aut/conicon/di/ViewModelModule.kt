@@ -15,6 +15,7 @@ import hu.bme.aut.conicon.ui.main.home.HomeViewModel
 import hu.bme.aut.conicon.ui.main.postupload.PostUploadViewModel
 import hu.bme.aut.conicon.ui.main.profile.ProfileViewModel
 import hu.bme.aut.conicon.ui.post.PostViewModel
+import hu.bme.aut.conicon.ui.search.SearchViewModel
 import hu.bme.aut.conicon.ui.setusername.SetUsernameViewModel
 import hu.bme.aut.conicon.ui.signup.SignUpViewModel
 
@@ -79,4 +80,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EditProfileViewModel::class)
     abstract fun bindEditProfileViewModel(editProfileViewModel: EditProfileViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun bindSearchViewModel(searchViewModel: SearchViewModel) : ViewModel
 }

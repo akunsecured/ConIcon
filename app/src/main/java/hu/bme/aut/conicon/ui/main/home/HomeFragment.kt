@@ -17,6 +17,7 @@ import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.conversations.ConversationsFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
+import hu.bme.aut.conicon.ui.search.SearchFragment
 
 /**
  * This is the view where the posts will be shown
@@ -45,6 +46,10 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
 
         binding.ivLogoMin.setOnClickListener {
             (binding.rvPosts.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
+        }
+
+        binding.ivSearch.setOnClickListener {
+            navigator?.add(SearchFragment())
         }
 
         binding.ivMessages.setOnClickListener {
