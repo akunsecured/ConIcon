@@ -25,6 +25,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.MessageAdapter
 import hu.bme.aut.conicon.databinding.FragmentChatBinding
 import hu.bme.aut.conicon.network.model.MessageElement
+import hu.bme.aut.conicon.ui.chat_imageview.ImageViewFragment
 import java.util.*
 
 class ChatFragment(private val conversationID: String, private val userID: String) : RainbowCakeFragment<ChatViewState, ChatViewModel>(), MessageAdapter.MessageListener {
@@ -101,6 +102,12 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
                 binding.rvMessages.smoothScrollToPosition(0)
             }
         }, 100)
+    }
+
+    override fun onMediaMessageClicked(message: MessageElement) {
+        if (message.isItMedia) {
+            navigator?.add(ImageViewFragment(message.mediaLink.toString()))
+        }
     }
 
     private fun initRecyclerView() {

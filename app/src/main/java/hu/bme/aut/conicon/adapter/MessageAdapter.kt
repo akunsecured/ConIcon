@@ -65,6 +65,7 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
     interface MessageListener {
         fun onMessageLongClicked(position: Int) : Boolean
         fun scrollToLast()
+        fun onMediaMessageClicked(message: MessageElement)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -85,6 +86,10 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
                 holder.tvMessage.visibility = View.GONE
                 holder.cvImage.visibility = View.VISIBLE
                 Picasso.get().load(model.mediaLink).into(holder.ivMessage)
+
+                holder.cvImage.setOnClickListener {
+                    listener.onMediaMessageClicked(model)
+                }
             } else {
                 holder.tvMessage.visibility = View.VISIBLE
                 holder.cvImage.visibility = View.GONE
@@ -104,6 +109,10 @@ class MessageAdapter(options: FirestoreRecyclerOptions<MessageElement>,
                 holder.tvMessage.visibility = View.GONE
                 holder.cvImage.visibility = View.VISIBLE
                 Picasso.get().load(model.mediaLink).into(holder.ivMessage)
+
+                holder.cvImage.setOnClickListener {
+                    listener.onMediaMessageClicked(model)
+                }
             } else {
                 holder.tvMessage.visibility = View.VISIBLE
                 holder.cvImage.visibility = View.GONE
