@@ -45,6 +45,16 @@ class PostFragment(private val post: MediaElement) : RainbowCakeFragment<PostVie
             navigator?.pop()
         }
 
+        if (post.postLocation != null) {
+            binding.includedPost.tvPlace.visibility = View.VISIBLE
+            binding.includedPost.tvPlace.text = post.postLocation.location
+            binding.includedPost.tvPlace.setOnClickListener {
+                CommonMethods().startMap(requireContext(), post.postLocation.lat!!, post.postLocation.lng!!)
+            }
+        } else {
+            binding.includedPost.tvPlace.visibility = View.GONE
+        }
+
         Picasso.get().load(post.mediaLink).into(binding.includedPost.ivPostImage)
 
         if (post.details != null) {

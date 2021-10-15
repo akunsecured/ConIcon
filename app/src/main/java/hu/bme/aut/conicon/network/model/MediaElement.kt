@@ -7,5 +7,6 @@ data class MediaElement (
         val mediaLink: String = "",
         var likes: MutableList<String> = mutableListOf(),
         val comments: MutableList<String> = mutableListOf(),
-        val details: String? = null
+        val details: String? = null,
+        val postLocation: PostLocation? = null
 )

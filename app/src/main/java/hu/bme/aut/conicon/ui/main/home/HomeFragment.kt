@@ -14,6 +14,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.MediaAdapter
 import hu.bme.aut.conicon.databinding.FragmentHomeBinding
 import hu.bme.aut.conicon.network.model.MediaElement
+import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.conversations.ConversationsFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
@@ -128,5 +129,9 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
                 R.anim.from_left_to_right_in,
                 R.anim.from_left_to_right_out
         )
+    }
+
+    override fun viewLocation(lat: Double, lng: Double) {
+        CommonMethods().startMap(requireContext(), lat, lng)
     }
 }

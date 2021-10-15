@@ -28,19 +28,8 @@ class HomeViewModel @Inject constructor(
         query.get().addOnSuccessListener { querySnapshot ->
             if (!querySnapshot.isEmpty) {
                 for (document in querySnapshot.documents) {
-                    val postDocument = document.data as Map<String, Any>
-                    val id = postDocument["id"].toString()
-                    val date = postDocument["date"] as Long
-                    val ownerID = postDocument["ownerID"].toString()
-                    val mediaLink = postDocument["mediaLink"].toString()
-                    val likes = postDocument["likes"] as MutableList<String>
-                    val comments = postDocument["comments"] as MutableList<String>
-                    val details = postDocument["details"] as String?
-
                     posts.add(
-                            MediaElement(
-                                    id, date, ownerID, mediaLink, likes, comments, details
-                            )
+                            document.toObject(MediaElement::class.java)!!
                     )
                 }
             }

@@ -2,6 +2,8 @@ package hu.bme.aut.conicon.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -204,5 +206,21 @@ class CommonMethods {
                 SimpleDateFormat("MMMM d, yyyy, HH:mm").format(date)
             }
         }
+    }
+
+    /**
+     * This method starts the mobile's map application to show
+     * the place whose coordinates were given as parameters
+     * @param context Context
+     * @param lat Latitude
+     * @param lng Longitude
+     */
+    fun startMap(context: Context, lat: Double, lng: Double) {
+        val uri = String.format(
+            Locale.ENGLISH, "geo:%f,%f?z=%d&q=%f,%f (%s)",
+            lat, lng, 16, lat, lng, "Photo was taken here"
+        )
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        context.startActivity(intent)
     }
 }

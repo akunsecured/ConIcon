@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import hu.bme.aut.conicon.network.model.PostLocation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -25,7 +26,7 @@ class PostUploadViewModel @Inject constructor(
     /**
      * This method is responsible for uploading the selected image to the Firebase Storage
      */
-    fun uploadImage(uri: Uri, postDetails: String? = null) = viewModelScope.launch {
+    fun uploadImage(uri: Uri, postDetails: String? = null, postLocation: PostLocation? = null) = viewModelScope.launch {
         viewState = Loading
         delay(1000)
 
@@ -51,7 +52,8 @@ class PostUploadViewModel @Inject constructor(
                                 "mediaLink" to url.toString(),
                                 "likes" to arrayListOf<String>(),
                                 "comments" to arrayListOf<String>(),
-                                "details" to postDetails
+                                "details" to postDetails,
+                                "postLocation" to postLocation
                         )
                 ).addOnSuccessListener {
                     val userRef = FirebaseFirestore.getInstance().collection("users").document(uid)

@@ -17,6 +17,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.CommonMethods
+import java.util.*
 
 /**
  * This class is the Adapter of the posts' RecyclerView
@@ -70,7 +71,19 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
             listener.viewProfile(mediaElement.ownerID)
         }
 
-        holder.tvPlace.visibility = View.GONE
+        if (mediaElement.postLocation != null) {
+            holder.tvPlace.visibility = View.VISIBLE
+            holder.tvPlace.text = mediaElement.postLocation.location
+
+            holder.tvPlace.setOnClickListener {
+                listener.viewLocation(
+                        mediaElement.postLocation.lat!!,
+                        mediaElement.postLocation.lng!!
+                )
+            }
+        } else {
+            holder.tvPlace.visibility = View.GONE
+        }
 
         Picasso.get().load(mediaElement.mediaLink).into(holder.ivPostImage)
 
@@ -126,6 +139,7 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
     interface MediaItemListener {
         fun viewLikes(likes: MutableList<String>)
         fun viewProfile(userID: String)
+        fun viewLocation(lat: Double, lng: Double)
     }
 
     override fun getItemCount(): Int = mediaElements.size
