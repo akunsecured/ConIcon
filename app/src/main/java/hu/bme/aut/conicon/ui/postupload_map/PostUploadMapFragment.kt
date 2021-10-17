@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.GpsStatus.GPS_EVENT_STARTED
+import android.location.GpsStatus.GPS_EVENT_STOPPED
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -31,7 +33,8 @@ class PostUploadMapFragment : Fragment() {
 
     private lateinit var gMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var currentLocation: Location
+    private var currentLocation: Location? = null
+    private lateinit var btnUseCurrentLocation: Button
     private lateinit var btnSelectLocation: Button
     private var selectedLocation: LatLng? = null
 
@@ -59,11 +62,11 @@ class PostUploadMapFragment : Fragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
-        val btnUseCurrentLocation = view.findViewById<Button>(R.id.btnUseCurrentLocation)
+        btnUseCurrentLocation = view.findViewById(R.id.btnUseCurrentLocation)
         btnSelectLocation = view.findViewById(R.id.btnSelectLocation)
 
         btnUseCurrentLocation.setOnClickListener {
-            placeMarker(LatLng(currentLocation.latitude, currentLocation.longitude))
+            placeMarker(LatLng(currentLocation?.latitude!!, currentLocation?.longitude!!))
         }
 
         btnSelectLocation.setOnClickListener {
@@ -99,21 +102,38 @@ class PostUploadMapFragment : Fragment() {
                             requireContext(),
                             Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED) {
+                requireActivity().requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                        101)
                 return
             }
             fusedLocationClient.lastLocation.addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     if (task.result != null) {
                         currentLocation = task.result as Location
-                        gMap.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                        LatLng(currentLocation.latitude, currentLocation.longitude), 16.0f
-                                )
-                        )
+                        if (currentLocation != null) {
+                            btnUseCurrentLocation.visibility = View.VISIBLE
+
+                            gMap.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                            LatLng(currentLocation?.latitude!!, currentLocation?.longitude!!), 16.0f
+                                    )
+                            )
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 101) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation()
             }
         }
     }

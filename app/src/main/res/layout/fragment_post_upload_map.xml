@@ -34,7 +34,8 @@
             android:paddingVertical="10dp"
             android:layout_margin="8dp"
             android:layout_above="@id/btnSelectLocation"
-            android:layout_alignWithParentIfMissing="true" />
+            android:layout_alignWithParentIfMissing="true"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
