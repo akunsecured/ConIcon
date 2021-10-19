@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import co.zsmb.rainbowcake.navigation.SimpleNavActivity
 import com.google.firebase.auth.FirebaseAuth
+import hu.bme.aut.conicon.ui.chat.ChatFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
 import hu.bme.aut.conicon.ui.main.MainFragment
 import hu.bme.aut.conicon.ui.setusername.SetUsernameFragment
@@ -24,7 +25,18 @@ class NavigationActivity : SimpleNavActivity() {
                 // Checking if we are logged in or not
                 if (auth.currentUser != null) {
                     if (!noUsername) {
-                        navigator.add(MainFragment())
+                        val intent = intent
+                        val conversationID = intent.getStringExtra("conversationID")
+                        val senderID = intent.getStringExtra("senderID")
+                        // Checking if the user tapped on a chat notification
+                        if (conversationID != null && senderID != null) {
+                            navigator.setStack(
+                                MainFragment(),
+                                ChatFragment(conversationID, senderID)
+                            )
+                        } else {
+                            navigator.add(MainFragment())
+                        }
                     } else {
                         navigator.add(SetUsernameFragment())
                     }

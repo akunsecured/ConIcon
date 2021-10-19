@@ -19,10 +19,15 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.PagerAdapter
 import hu.bme.aut.conicon.databinding.FragmentMainBinding
+import hu.bme.aut.conicon.network.model.Token
 
 /**
  * This is the application's main view
@@ -52,6 +57,35 @@ class MainFragment : RainbowCakeFragment<MainViewState, MainViewModel>() {
         checkIfEmailIsVerified()
 
         setupTabLayout(binding.tlTabLayout, binding.vpViewPager)
+        generateFCMToken()
+    }
+
+    private fun generateFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { result ->
+            if (result != null) {
+                val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                val tokensReference =
+                    FirebaseFirestore.getInstance().collection("Tokens").document(uid)
+                tokensReference.get().addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val tokenObject = document.toObject(Token::class.java)!!
+
+                        if (!tokenObject.tokens.containsKey(result)) {
+                            tokensReference.update("tokens.$result", true)
+                        }
+                    } else {
+                        tokensReference.set(
+                            Token(
+                                uid,
+                                hashMapOf(
+                                    result to true
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {

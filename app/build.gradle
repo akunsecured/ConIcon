@@ -98,4 +98,8 @@ dependencies {
 
     // TouchImageView
     implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1'
+
+    // FCM, Volley
+    implementation 'com.google.firebase:firebase-messaging-ktx:22.0.0'
+    implementation 'com.android.volley:volley:1.2.1'
 }
