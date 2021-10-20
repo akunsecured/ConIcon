@@ -1,5 +1,6 @@
 package hu.bme.aut.conicon.services
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,7 +8,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -25,12 +24,13 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.constants.AppConstants
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.NavigationActivity
-import hu.bme.aut.conicon.ui.chat.ChatFragment
 import java.lang.Exception
 import java.util.*
 
+@SuppressLint("UnspecifiedImmutableFlag")
 class FirebaseNotificationService : FirebaseMessagingService() {
     private val auth = FirebaseAuth.getInstance()
 
@@ -44,19 +44,24 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
         if (remoteMessage.data.isNotEmpty()) {
             val data = remoteMessage.data
+            val typeValue = data["type"]!!.toInt()
 
-            if (auth.currentUser != null && data["receiverID"] == auth.currentUser?.uid.toString()) {
+            val type = NotificationType.getByValue(typeValue)!!
+
+            if (
+                auth.currentUser != null
+                && data["receiverID"] == auth.currentUser?.uid.toString()
+                && data["receiverID"] != data["senderID"]
+            ) {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
                     createOreoNotification(
-                        data["conversationID"].toString(),
-                        data["senderID"].toString(),
-                        data["message"].toString()
+                        type,
+                        data
                     )
                 } else {
                     createNotification(
-                        data["conversationID"].toString(),
-                        data["senderID"].toString(),
-                        data["message"].toString()
+                        type,
+                        data
                     )
                 }
             }
@@ -72,103 +77,191 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun createNotification(
-        conversationID: String,
-        senderID: String,
-        message: String
+        type: NotificationType,
+        dataMap: MutableMap<String, String>
     ) {
+        val senderID = dataMap["senderID"].toString()
         val userReference = FirebaseFirestore.getInstance().collection("users").document(senderID)
         userReference.get().addOnSuccessListener { document ->
             if (document.exists()) {
                 val user = document.toObject(AppUser::class.java)!!
 
                 val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                val builder = NotificationCompat.Builder(this, AppConstants.CHANNEL_ID)
-                builder.setContentTitle(user.username)
-                    .setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                val builder = NotificationCompat.Builder(this, AppConstants.CHAT_CHANNEL_ID)
+                builder.setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setAutoCancel(true)
                     .setColor(ResourcesCompat.getColor(resources, R.color.orange, null))
                     .setSound(uri)
 
-                val intent = Intent(this, NavigationActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                intent.putExtra("conversationID", conversationID)
-                intent.putExtra("senderID", senderID)
+                val notifyID: Int
 
-                val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-                builder.setContentIntent(pendingIntent)
+                when (type) {
+                    NotificationType.MESSAGE -> {
+                        val message = dataMap["message"].toString()
+                        val conversationID = dataMap["conversationID"].toString()
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("conversationID", conversationID)
+                        intent.putExtra("senderID", senderID)
+                        intent.putExtra("type", NotificationType.MESSAGE.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        builder.setContentTitle(user.username)
+                            .setContentText(message)
+                            .setContentIntent(pendingIntent)
+
+                        notifyID = senderID.hashCode()
+                    }
+
+                    NotificationType.IMAGE_LIKE -> {
+                        val mediaID = dataMap["mediaID"].toString()
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("mediaID", mediaID)
+                        intent.putExtra("type", NotificationType.IMAGE_LIKE.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        builder.setContentTitle("New like")
+                            .setContentText("${user.username} has liked one of your posts")
+                            .setContentIntent(pendingIntent)
+
+                        notifyID = mediaID.hashCode()
+                    }
+
+                    NotificationType.FOLLOW -> {
+                        val receiverID = dataMap["receiverID"].toString()
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("receiverID", receiverID)
+                        intent.putExtra("type", NotificationType.FOLLOW.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        builder.setContentTitle("New follower")
+                            .setContentText("${user.username} has started following you")
+                            .setContentIntent(pendingIntent)
+
+                        notifyID = receiverID.hashCode()
+                    }
+                }
+
+
                 val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                manager.notify(senderID.hashCode(), builder.build())
+                manager.notify(notifyID, builder.build())
             }
         }
     }
 
     private fun createOreoNotification(
-        conversationID: String,
-        senderID: String,
-        message: String
+        type: NotificationType,
+        dataMap: MutableMap<String, String>
     ) {
+        val senderID = dataMap["senderID"].toString()
         val userReference = FirebaseFirestore.getInstance().collection("users").document(senderID)
         userReference.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 val user = document.toObject(AppUser::class.java)!!
 
-                val channel = NotificationChannel(AppConstants.CHANNEL_ID, "Message", NotificationManager.IMPORTANCE_HIGH)
+                val channel: NotificationChannel
+                val notificationBuilder: Notification.Builder
+                val notifyID: Int
+
+                val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+                when (type) {
+                    NotificationType.MESSAGE -> {
+                        val conversationID = dataMap["conversationID"].toString()
+                        val message = dataMap["message"].toString()
+
+                        channel = NotificationChannel(
+                            AppConstants.CHAT_CHANNEL_ID,
+                            "New message",
+                            NotificationManager.IMPORTANCE_HIGH
+                        )
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("conversationID", conversationID)
+                        intent.putExtra("senderID", senderID)
+                        intent.putExtra("type", NotificationType.MESSAGE.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        notificationBuilder = Notification.Builder(this, AppConstants.CHAT_CHANNEL_ID)
+                            .setContentTitle(user.username)
+                            .setContentText(message)
+                            .setContentIntent(pendingIntent)
+
+                        setNotificationLargeIcon(user, notificationBuilder)
+
+                        notifyID = senderID.hashCode()
+                    }
+
+                    NotificationType.IMAGE_LIKE -> {
+                        val mediaID = dataMap["mediaID"].toString()
+
+                        channel = NotificationChannel(
+                            AppConstants.IMAGE_LIKE_CHANNEL_ID,
+                            "Image liked",
+                            NotificationManager.IMPORTANCE_HIGH
+                        )
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("mediaID", mediaID)
+                        intent.putExtra("type", NotificationType.IMAGE_LIKE.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        notificationBuilder = Notification.Builder(this, AppConstants.IMAGE_LIKE_CHANNEL_ID)
+                            .setContentTitle("New like")
+                            .setContentText("${user.username} has liked one of your posts")
+                            .setContentIntent(pendingIntent)
+
+                        notifyID = mediaID.hashCode()
+                    }
+
+                    NotificationType.FOLLOW -> {
+                        val receiverID = dataMap["receiverID"].toString()
+
+                        channel = NotificationChannel(
+                            AppConstants.FOLLOW_CHANNEL_ID,
+                            "New follower",
+                            NotificationManager.IMPORTANCE_HIGH
+                        )
+
+                        val intent = Intent(this, NavigationActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.putExtra("receiverID", receiverID)
+                        intent.putExtra("type", NotificationType.FOLLOW.value)
+                        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                        notificationBuilder = Notification.Builder(this, AppConstants.FOLLOW_CHANNEL_ID)
+                            .setContentTitle("New follower")
+                            .setContentText("${user.username} has started following you")
+                            .setContentIntent(pendingIntent)
+
+                        setNotificationLargeIcon(user, notificationBuilder)
+
+                        notifyID = receiverID.hashCode()
+                    }
+                }
+
+                notificationBuilder.setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setAutoCancel(true)
+                    .setLights(Color.YELLOW, 100, 100)
+                    .setDefaults(0)
 
                 channel.setShowBadge(true)
                 channel.enableLights(true)
                 channel.enableVibration(true)
                 channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
 
-                val intent = Intent(this, NavigationActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                intent.putExtra("conversationID", conversationID)
-                intent.putExtra("senderID", senderID)
-
-                val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-
-                val notificationBuilder = Notification.Builder(this, AppConstants.CHANNEL_ID)
-                    .setContentTitle(user.username)
-                    .setContentText(message)
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setAutoCancel(true)
-                    .setLights(Color.YELLOW, 100, 100)
-                    .setContentIntent(pendingIntent)
-                    .setDefaults(0)
-
-                val context = this
-
-                if (user.photoUrl != null) {
-                    Picasso.get().load(user.photoUrl).into(
-                        object: Target {
-                            override fun onBitmapLoaded(
-                                bitmap: Bitmap?,
-                                from: Picasso.LoadedFrom?
-                            ) {
-                                notificationBuilder.setLargeIcon(bitmap)
-                            }
-
-                            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                                notificationBuilder.setLargeIcon(
-                                    getBitmapFromVector(applicationContext, R.drawable.ic_profile)
-                                )
-                            }
-
-                            override fun onPrepareLoad(placeHolderDrawable: Drawable?) { }
-                        }
-                    )
-                } else {
-                    notificationBuilder.setLargeIcon(
-                        getBitmapFromVector(applicationContext, R.drawable.ic_profile)
-                    )
-                }
+                manager.createNotificationChannel(channel)
 
                 val notification = notificationBuilder.build()
-
-                val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                manager.createNotificationChannel(channel)
-                manager.notify(senderID.hashCode(), notification)
+                manager.notify(notifyID, notification)
             }
         }
     }
@@ -183,5 +276,32 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+    private fun setNotificationLargeIcon(user: AppUser, notificationBuilder: Notification.Builder) {
+        if (user.photoUrl != null) {
+            Picasso.get().load(user.photoUrl).into(
+                object: Target {
+                    override fun onBitmapLoaded(
+                        bitmap: Bitmap?,
+                        from: Picasso.LoadedFrom?
+                    ) {
+                        notificationBuilder.setLargeIcon(bitmap)
+                    }
+
+                    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                        notificationBuilder.setLargeIcon(
+                            getBitmapFromVector(applicationContext, R.drawable.ic_profile)
+                        )
+                    }
+
+                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) { }
+                }
+            )
+        } else {
+            notificationBuilder.setLargeIcon(
+                getBitmapFromVector(applicationContext, R.drawable.ic_profile)
+            )
+        }
     }
 }

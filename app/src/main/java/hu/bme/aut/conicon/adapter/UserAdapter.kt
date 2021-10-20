@@ -13,7 +13,10 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.CommonMethods
+import org.json.JSONObject
 
 class UserAdapter(private val context: Context, private val listener: UserItemClickListener) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
     var userElements = arrayListOf<AppUser>()
@@ -79,6 +82,14 @@ class UserAdapter(private val context: Context, private val listener: UserItemCl
             userElement.followers.add(uid)
             holder.btnFollow.visibility = View.GONE
             holder.btnFollowOut.visibility = View.VISIBLE
+
+            val data = JSONObject()
+
+            data.put("receiverID", userElement.id)
+            data.put("type", NotificationType.FOLLOW.value)
+            data.put("senderID", uid)
+
+            CommonMethods().getTokens(userElement.id, data, context)
         }
 
         holder.btnFollowOut.setOnClickListener {

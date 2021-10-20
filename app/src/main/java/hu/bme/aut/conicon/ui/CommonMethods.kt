@@ -4,10 +4,20 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.firestore.FirebaseFirestore
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.constants.AppConstants
+import hu.bme.aut.conicon.constants.NotificationType
+import hu.bme.aut.conicon.network.model.Token
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -222,5 +232,66 @@ class CommonMethods {
         )
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
         context.startActivity(intent)
+    }
+
+    fun getTokens(userID: String, data: JSONObject, context: Context) {
+        val tokenRef = FirebaseFirestore.getInstance().collection("Tokens").document(userID)
+        tokenRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                // TODO: Handling error
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val tokenObject = snapshot.toObject(Token::class.java)!!
+
+                val tokens = tokenObject.tokens
+
+                val to = JSONObject()
+
+                for (token in tokens.keys) {
+                    to.put("to", token)
+                    to.put("data", data)
+
+                    sendNotification(to, context)
+                }
+            }
+        }
+    }
+
+    private fun sendNotification(to: JSONObject, context: Context) {
+        val request = object: JsonObjectRequest(
+            Method.POST,
+            AppConstants.NOTIFICATION_URL,
+            to,
+            Response.Listener { response ->
+                Log.d("Response", "$response")
+            },
+            Response.ErrorListener { error ->
+                Log.d("ResponseError", "$error")
+            }
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val map = HashMap<String, String>()
+
+                map["Authorization"] = "key=${AppConstants.SERVER_KEY}"
+                map["Content-type"] = bodyContentType
+
+                return map
+            }
+
+            override fun getBodyContentType(): String {
+                return "application/json"
+            }
+        }
+
+        val requestQueue = Volley.newRequestQueue(context)
+        request.retryPolicy = DefaultRetryPolicy(
+            30000,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+
+        requestQueue.add(request)
     }
 }

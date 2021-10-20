@@ -14,9 +14,11 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.CommonMethods
+import org.json.JSONObject
 import java.util.*
 
 /**
@@ -107,6 +109,15 @@ class MediaAdapter(private val context: Context, private val listener: MediaItem
 
                 mediaElement.likes.add(uid)
                 postReference.update("likes", FieldValue.arrayUnion(uid))
+
+                val data = JSONObject()
+
+                data.put("receiverID", mediaElement.ownerID)
+                data.put("mediaID", mediaElement.id)
+                data.put("type", NotificationType.IMAGE_LIKE.value)
+                data.put("senderID", uid)
+
+                CommonMethods().getTokens(mediaElement.ownerID, data, context)
             }
 
             checkLikes(holder, mediaElement)

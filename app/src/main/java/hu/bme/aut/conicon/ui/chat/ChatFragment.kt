@@ -29,9 +29,11 @@ import com.google.firebase.storage.FirebaseStorage
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.MessageAdapter
 import hu.bme.aut.conicon.constants.AppConstants
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.databinding.FragmentChatBinding
 import hu.bme.aut.conicon.network.model.MessageElement
 import hu.bme.aut.conicon.network.model.Token
+import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.chat_imageview.ImageViewFragment
 import org.json.JSONObject
 import java.util.*
@@ -102,7 +104,15 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
 
             binding.etMessage.text.clear()
 
-            getTokens(message)
+            val data = JSONObject()
+
+            data.put("conversationID", conversationID)
+            data.put("senderID", auth.currentUser?.uid.toString())
+            data.put("receiverID", userID)
+            data.put("message", message)
+            data.put("type", NotificationType.MESSAGE.value)
+
+            CommonMethods().getTokens(userID, data, requireContext())
         }
     }
 
@@ -240,72 +250,5 @@ class ChatFragment(private val conversationID: String, private val userID: Strin
                 Toast.makeText(requireContext(), ex?.message.toString(), Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun getTokens(message: String) {
-        val tokenRef = FirebaseFirestore.getInstance().collection("Tokens").document(userID)
-        tokenRef.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                // TODO: Handling error
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null && snapshot.exists()) {
-                val tokenObject = snapshot.toObject(Token::class.java)!!
-
-                val tokens = tokenObject.tokens
-
-                val to = JSONObject()
-                val data = JSONObject()
-
-                data.put("conversationID", conversationID)
-                data.put("senderID", auth.currentUser?.uid.toString())
-                data.put("receiverID", userID)
-                data.put("message", message)
-
-                for (token in tokens.keys) {
-                    to.put("to", token)
-                    to.put("data", data)
-
-                    sendNotification(to)
-                }
-            }
-        }
-    }
-
-    private fun sendNotification(to: JSONObject) {
-        val request = object: JsonObjectRequest(
-            Method.POST,
-            AppConstants.NOTIFICATION_URL,
-            to,
-            Response.Listener { response ->
-                Log.d("Response", "$response")
-            },
-            Response.ErrorListener { error ->
-                Log.d("ResponseError", "$error")
-            }
-        ) {
-            override fun getHeaders(): MutableMap<String, String> {
-                val map = HashMap<String, String>()
-
-                map["Authorization"] = "key=${AppConstants.SERVER_KEY}"
-                map["Content-type"] = bodyContentType
-
-                return map
-            }
-
-            override fun getBodyContentType(): String {
-                return "application/json"
-            }
-        }
-
-        val requestQueue = Volley.newRequestQueue(requireContext())
-        request.retryPolicy = DefaultRetryPolicy(
-            30000,
-            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-
-        requestQueue.add(request)
     }
 }

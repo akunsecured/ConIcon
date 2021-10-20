@@ -16,13 +16,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.UserPostAdapter
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
+import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.chat.ChatFragment
 import hu.bme.aut.conicon.ui.editprofile.EditProfileFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.login.LoginFragment
 import hu.bme.aut.conicon.ui.post.PostFragment
+import org.json.JSONObject
 
 /**
  * This is the view of the current user's profile
@@ -106,6 +109,14 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             userCollection.document(uid).update("following", FieldValue.arrayUnion(userID))
             user.followers.add(uid)
             updateUI(user)
+
+            val data = JSONObject()
+
+            data.put("receiverID", userID)
+            data.put("type", NotificationType.FOLLOW.value)
+            data.put("senderID", uid)
+
+            CommonMethods().getTokens(userID, data, requireContext())
         }
 
         binding.btnFollowOut.setOnClickListener {
