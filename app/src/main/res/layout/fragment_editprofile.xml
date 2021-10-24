@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/edit_profile"
                     android:textSize="24sp"
-                    android:textColor="@color/orange"
+                    android:textColor="@color/color_application"
                     android:layout_marginHorizontal="12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/ivCancel"
@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="8dp"
-            android:background="@color/orange"
+            android:background="@color/color_application"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:text="@string/edit_profile_picture"
         android:textSize="20sp"
-        android:textColor="@color/orange"
+        android:textColor="@color/color_application"
         android:layout_below="@id/ivProfilePicture"
         android:gravity="center" />
 
@@ -97,8 +97,8 @@
         android:layout_marginHorizontal="8dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:hint="@string/username"
-        android:textColorHint="@color/orange"
-        app:boxStrokeColor="@color/orange"
+        android:textColorHint="@color/color_application"
+        app:boxStrokeColor="@color/color_application"
         app:boxStrokeWidth="2dp"
         android:layout_below="@id/tvEditProfilePicture">
 
@@ -130,7 +130,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/orange"
+        android:indeterminateTint="@color/color_application"
         android:layout_centerInParent="true" />
 
 </RelativeLayout>

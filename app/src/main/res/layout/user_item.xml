@@ -30,7 +30,7 @@
         android:textAllCaps="false"
         android:textSize="14sp"
         android:layout_margin="8dp"
-        app:strokeColor="@color/orange"
+        app:strokeColor="@color/color_application"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
@@ -43,7 +43,7 @@
         android:textAllCaps="false"
         android:textSize="14sp"
         android:layout_margin="8dp"
-        app:strokeColor="@color/orange"
+        app:strokeColor="@color/color_application"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 

@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.constants.AppConstants
-import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.Token
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -49,7 +48,7 @@ class CommonMethods {
      */
     fun removeEditTextError(context: Context, til: TextInputLayout) {
         til.error = ""
-        til.defaultHintTextColor = AppCompatResources.getColorStateList(context, R.color.orange)
+        til.defaultHintTextColor = AppCompatResources.getColorStateList(context, R.color.color_application)
     }
 
     /**

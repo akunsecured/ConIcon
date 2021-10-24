@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.ConIcon" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimary">@color/color_application</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
@@ -17,7 +17,7 @@
 
     <color name="background">@color/dark_gray</color>
     <color name="google_button_background">@color/light_gray</color>
-    <color name="orange">@color/dark_orange</color>
+    <color name="color_application">@color/color_application_in_dark_mode</color>
     <color name="icon_background">#FFFFFF</color>
     <color name="light_gray">@color/gray</color>
 </resources>

@@ -78,7 +78,7 @@
             android:src="@drawable/ic_heart_empty"
             android:layout_marginVertical="8dp"
             android:layout_marginHorizontal="8dp"
-            app:tint="@color/orange" />
+            app:tint="@color/color_application" />
 
         <ImageView
             android:id="@+id/btnComment"
@@ -87,7 +87,7 @@
             android:src="@drawable/ic_comment"
             android:layout_marginVertical="8dp"
             android:layout_marginHorizontal="16dp"
-            app:tint="@color/orange" />
+            app:tint="@color/color_application" />
 
     </LinearLayout>
 

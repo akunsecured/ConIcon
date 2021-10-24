@@ -91,7 +91,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 builder.setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setAutoCancel(true)
-                    .setColor(ResourcesCompat.getColor(resources, R.color.orange, null))
+                    .setColor(ResourcesCompat.getColor(resources, R.color.color_application, null))
                     .setSound(uri)
 
                 val notifyID: Int

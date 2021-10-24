@@ -28,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/posting_a_new_image"
                     android:textSize="24sp"
-                    android:textColor="@color/orange"
+                    android:textColor="@color/color_application"
                     android:layout_marginHorizontal="12dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginHorizontal="8dp"
-                    android:background="@color/orange"
+                    android:background="@color/color_application"
                     app:layout_constraintBottom_toBottomOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -74,7 +74,7 @@
                 android:layout_width="240dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:background="@color/orange"
+                android:background="@color/color_application"
                 android:padding="2dp"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentTop="true">
@@ -94,7 +94,7 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminateTint="@color/orange"
+                android:indeterminateTint="@color/color_application"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp" />
 
@@ -107,7 +107,7 @@
                 android:textSize="18sp"
                 android:paddingVertical="10dp"
                 android:layout_margin="8dp"
-                app:strokeColor="@color/orange"
+                app:strokeColor="@color/color_application"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_below="@id/clPostImage" />
 
@@ -117,8 +117,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/post_details"
-                android:textColorHint="@color/orange"
-                app:boxStrokeColor="@color/orange"
+                android:textColorHint="@color/color_application"
+                app:boxStrokeColor="@color/color_application"
                 app:boxStrokeWidth="2dp"
                 android:layout_margin="8dp"
                 android:layout_below="@id/btnSelectImage">
@@ -174,7 +174,7 @@
                 android:textSize="18sp"
                 android:paddingVertical="10dp"
                 android:layout_margin="8dp"
-                app:strokeColor="@color/orange"
+                app:strokeColor="@color/color_application"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_below="@id/llLocation" />
 

@@ -4,6 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/drawable/ic_profile.xml" value="0.14635416666666667" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_home.xml" value="0.264" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_login.xml" value="0.176" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_post.xml" value="0.136" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_post_upload_map.xml" value="0.10208333333333333" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_postupload.xml" value="0.2" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_signup.xml" value="0.16486486486486487" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/user_item.xml" value="0.19746376811594202" />
       </map>
     </option>
   </component>

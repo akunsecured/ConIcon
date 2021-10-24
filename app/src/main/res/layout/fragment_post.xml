@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/likes"
                 android:textSize="24sp"
-                android:textColor="@color/orange"
+                android:textColor="@color/color_application"
                 android:layout_marginHorizontal="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="8dp"
-            android:background="@color/orange"
+            android:background="@color/color_application"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -72,7 +72,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/orange"
+        android:indeterminateTint="@color/color_application"
         android:layout_centerInParent="true" />
 
 </RelativeLayout>
