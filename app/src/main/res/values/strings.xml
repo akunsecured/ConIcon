@@ -39,4 +39,7 @@
     <string name="use_current_location">Use current location</string>
     <string name="location_permission_request">Please give location permission in the settings!</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="error">Error</string>
+    <string name="ok">Ok</string>
+    <string name="error_user_deleted">This account has been deleted</string>
 </resources>

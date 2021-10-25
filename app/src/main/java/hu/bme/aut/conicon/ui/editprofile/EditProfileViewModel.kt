@@ -176,6 +176,15 @@ class EditProfileViewModel @Inject constructor(
             viewState = FirebaseError(ex.message.toString())
         }
 
+        val userStatusRef =
+            FirebaseFirestore.getInstance().collection("statuses").document(user.id)
+
+        userStatusRef.set(
+            hashMapOf(
+                "deleted" to true
+            )
+        )
+
         // Removing the user from the database
         userCollection.document(user.id).delete().addOnSuccessListener {
             FirebaseAuth.getInstance().currentUser?.delete()?.addOnSuccessListener {

@@ -118,11 +118,6 @@ class EditProfileFragment(private val user: AppUser) : RainbowCakeFragment<EditP
 
             ProfileDeleted -> {
                 viewModel.init()
-                navigator?.run {
-                    setStack()
-                    add(LoginFragment())
-                    executePending()
-                }
             }
         }.exhaustive
     }

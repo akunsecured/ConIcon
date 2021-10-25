@@ -1,11 +1,21 @@
 package hu.bme.aut.conicon.ui
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.TextView
 import co.zsmb.rainbowcake.extensions.exhaustive
 import co.zsmb.rainbowcake.navigation.SimpleNavActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
+import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.chat.ChatFragment
@@ -20,11 +30,13 @@ import kotlinx.android.synthetic.main.fragment_post_upload_map.*
  * This Activity is responsible for the navigation
  */
 class NavigationActivity : SimpleNavActivity() {
+    private val auth = FirebaseAuth.getInstance()
+    private lateinit var statusListener: ListenerRegistration
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
-            val auth = FirebaseAuth.getInstance()
             navigator.run {
                 val sharedPref = getSharedPreferences("CONICON_AUTH", Context.MODE_PRIVATE)
                 val noUsername = sharedPref.getBoolean("no_username", false)
@@ -93,11 +105,61 @@ class NavigationActivity : SimpleNavActivity() {
                     } else {
                         navigator.add(SetUsernameFragment())
                     }
+
+                    addStatusListener()
                 }
                 else {
                     navigator.add(LoginFragment())
                 }
             }
         }
+    }
+
+    fun addStatusListener() {
+        val uid = auth.currentUser?.uid.toString()
+        val userStatusRef =
+            FirebaseFirestore.getInstance().collection("statuses").document(uid)
+
+        statusListener = userStatusRef.addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                if (snapshot.data?.get("deleted") == true) {
+                    showErrorDialog(
+                        getString(R.string.error_user_deleted)
+                    )
+                }
+            }
+        }
+    }
+
+    private fun showErrorDialog(message: String) {
+        val dialog = Dialog(this)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.error_dialog)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+
+        val tvErrorMessage = dialog.findViewById<TextView>(R.id.tvErrorMessage)
+        val btnOk = dialog.findViewById<Button>(R.id.btnOk)
+
+        tvErrorMessage.text = message
+
+        btnOk.setOnClickListener {
+            auth.signOut()
+
+            navigator.setStack(
+                LoginFragment()
+            )
+            dialog.dismiss()
+        }
+
+        statusListener.remove()
+
+        dialog.show()
     }
 }
