@@ -6,6 +6,7 @@ import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.ConversationElement
@@ -142,6 +143,36 @@ class EditProfileViewModel @Inject constructor(
                 }
             }
         }.addOnFailureListener { ex ->
+            viewState = FirebaseError(ex.message.toString())
+        }
+
+        val storageReference =
+            FirebaseStorage.getInstance().reference.child("users/${user.id}")
+
+        storageReference.child("posts").listAll().addOnSuccessListener { result ->
+            if (result.items.isNotEmpty()) {
+                for (item in result.items) {
+                    item.delete()
+                }
+            }
+        }.addOnFailureListener { ex ->
+            viewState = FirebaseError(ex.message.toString())
+        }
+
+        storageReference.child("profile_pictures").listAll().addOnSuccessListener { result ->
+            if (result.items.isNotEmpty()) {
+                for (item in result.items) {
+                    item.delete()
+                }
+            }
+        }.addOnFailureListener { ex ->
+            viewState = FirebaseError(ex.message.toString())
+        }
+
+        val tokenCollection =
+            FirebaseFirestore.getInstance().collection("Tokens")
+
+        tokenCollection.document(user.id).delete().addOnFailureListener { ex ->
             viewState = FirebaseError(ex.message.toString())
         }
 
