@@ -19,6 +19,7 @@ import hu.bme.aut.conicon.databinding.FragmentEditprofileBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.login.LoginFragment
+import java.util.*
 
 class EditProfileFragment(private val user: AppUser) : RainbowCakeFragment<EditProfileViewState, EditProfileViewModel>() {
 
@@ -63,7 +64,7 @@ class EditProfileFragment(private val user: AppUser) : RainbowCakeFragment<EditP
         }
 
         binding.ivAccept.setOnClickListener {
-            viewModel.updateUsername(binding.tietUsername.text.toString())
+            viewModel.updateUsername(binding.tietUsername.text.toString().toLowerCase(Locale.ROOT))
         }
 
         binding.btnDeleteProfile.setOnClickListener {

@@ -19,6 +19,7 @@ import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.main.MainFragment
 import hu.bme.aut.conicon.ui.setusername.SetUsernameFragment
 import hu.bme.aut.conicon.ui.signup.SignUpFragment
+import java.util.*
 
 /**
  * The application's user can login through this Fragment
@@ -41,7 +42,7 @@ class LoginFragment : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
 
         binding.btnLogin.setOnClickListener {
             if (!checkEmptyEditTexts()) {
-                val emailOrUsername = binding.tietEmailOrUsername.text.toString()
+                val emailOrUsername = binding.tietEmailOrUsername.text.toString().trim().toLowerCase(Locale.ROOT)
                 val password = binding.tietPassword.text.toString()
 
                 viewModel.login(emailOrUsername, password)

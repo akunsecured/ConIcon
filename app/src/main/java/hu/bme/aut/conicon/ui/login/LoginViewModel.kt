@@ -104,22 +104,6 @@ class LoginViewModel @javax.inject.Inject constructor(
             }.addOnFailureListener { ex ->
                 viewState = DatabaseError(ex.message.toString())
             }
-
-            /*
-            val userDatabaseReference = Firebase.database.reference.child("users")
-
-            userDatabaseReference.child(uid).get().addOnSuccessListener { dataSnapshot ->
-                if (dataSnapshot.value == null) {
-                    val sharedPref = context.getSharedPreferences("CONICON_AUTH", Context.MODE_PRIVATE)
-                    sharedPref.edit().putBoolean("no_username", true).apply()
-                    viewState = SetUsername
-                } else {
-                    // If the account exists in the Realtime Database, we logged in
-                    viewState = SuccessfulLogin
-                }
-            }.addOnFailureListener { ex ->
-                viewState = DatabaseError(ex.message.toString())
-            }*/
         }.addOnFailureListener { ex ->
             viewState = LoginError(ex.message.toString())
         }
