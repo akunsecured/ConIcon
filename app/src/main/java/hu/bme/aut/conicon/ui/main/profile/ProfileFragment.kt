@@ -13,6 +13,7 @@ import co.zsmb.rainbowcake.navigation.navigator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.adapter.UserPostAdapter
@@ -66,7 +67,16 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.nav_sign_out -> {
+                        FirebaseMessaging.getInstance().token.addOnSuccessListener { result ->
+                            if (result != null) {
+                                val tokenReference =
+                                    FirebaseFirestore.getInstance().collection("Tokens").document(uid)
+                                tokenReference.update("tokens.$result", FieldValue.delete())
+                            }
+                        }
+
                         auth.signOut()
+
                         val listener = requireActivity() as NavigationActivity
                         listener.stopListeningStatus()
                         navigator?.replace(
