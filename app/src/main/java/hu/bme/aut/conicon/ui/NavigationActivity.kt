@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.UserStatusListener
 import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.chat.ChatFragment
@@ -29,7 +30,7 @@ import kotlinx.android.synthetic.main.fragment_post_upload_map.*
 /**
  * This Activity is responsible for the navigation
  */
-class NavigationActivity : SimpleNavActivity() {
+class NavigationActivity : SimpleNavActivity(), UserStatusListener {
     private val auth = FirebaseAuth.getInstance()
     private lateinit var statusListener: ListenerRegistration
 
@@ -105,34 +106,43 @@ class NavigationActivity : SimpleNavActivity() {
                     } else {
                         navigator.add(SetUsernameFragment())
                     }
-
-                    addStatusListener()
                 }
                 else {
-                    navigator.add(LoginFragment())
+                    navigator.add(LoginFragment(this@NavigationActivity))
                 }
             }
         }
     }
 
-    fun addStatusListener() {
-        val uid = auth.currentUser?.uid.toString()
-        val userStatusRef =
-            FirebaseFirestore.getInstance().collection("statuses").document(uid)
+    override fun onResume() {
+        super.onResume()
 
-        statusListener = userStatusRef.addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
+        if (auth.currentUser != null) {
+            startListeningStatus()
+        }
+    }
+
+    override fun startListeningStatus() {
+        val uid = auth.currentUser?.uid.toString()
+
+        val userRef =
+            FirebaseFirestore.getInstance().collection("users").document(uid)
+
+        statusListener = userRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 return@addSnapshotListener
             }
 
-            if (snapshot != null && snapshot.exists()) {
-                if (snapshot.data?.get("deleted") == true) {
-                    showErrorDialog(
-                        getString(R.string.error_user_deleted)
-                    )
-                }
+            if (snapshot == null || !snapshot.exists()) {
+                showErrorDialog(
+                    getString(R.string.error_user_deleted)
+                )
             }
         }
+    }
+
+    override fun stopListeningStatus() {
+        statusListener.remove()
     }
 
     private fun showErrorDialog(message: String) {
@@ -153,7 +163,7 @@ class NavigationActivity : SimpleNavActivity() {
             auth.signOut()
 
             navigator.setStack(
-                LoginFragment()
+                LoginFragment(this)
             )
             dialog.dismiss()
         }

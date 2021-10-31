@@ -18,7 +18,6 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentEditprofileBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.CommonMethods
-import hu.bme.aut.conicon.ui.login.LoginFragment
 import java.util.*
 
 class EditProfileFragment(private val user: AppUser) : RainbowCakeFragment<EditProfileViewState, EditProfileViewModel>() {

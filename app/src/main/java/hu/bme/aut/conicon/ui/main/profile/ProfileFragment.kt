@@ -20,6 +20,7 @@ import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.ui.CommonMethods
+import hu.bme.aut.conicon.ui.NavigationActivity
 import hu.bme.aut.conicon.ui.chat.ChatFragment
 import hu.bme.aut.conicon.ui.editprofile.EditProfileFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
@@ -66,8 +67,10 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
                 when (item.itemId) {
                     R.id.nav_sign_out -> {
                         auth.signOut()
+                        val listener = requireActivity() as NavigationActivity
+                        listener.stopListeningStatus()
                         navigator?.replace(
-                                LoginFragment(),
+                                LoginFragment(listener),
                                 R.anim.from_down_to_up_in,
                                 R.anim.from_down_to_up_out,
                                 R.anim.from_up_to_down_in,
