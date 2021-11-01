@@ -1,10 +1,7 @@
 package hu.bme.aut.conicon.services
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -195,6 +192,25 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                             .setContentIntent(pendingIntent)
 
                         setNotificationLargeIcon(user, notificationBuilder)
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            val replyRemote = RemoteInput.Builder(AppConstants.REPLY_KEY).run {
+                                setLabel(getString(R.string.type_to_message))
+                                build()
+                            }
+
+                            val replyIntent = Intent(this, DirectReplyReceiver::class.java)
+                            replyIntent.putExtra("conversationID", conversationID)
+                            replyIntent.putExtra("senderID", senderID)
+                            val replyPendingIntent =
+                                PendingIntent.getBroadcast(this, 1, replyIntent, PendingIntent.FLAG_ONE_SHOT)
+
+                            val replyAction = Notification.Action.Builder(
+                                0, "Reply", replyPendingIntent
+                            ).addRemoteInput(replyRemote).build()
+
+                            notificationBuilder.addAction(replyAction)
+                        }
 
                         notifyID = senderID.hashCode()
                     }
