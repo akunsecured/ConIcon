@@ -24,7 +24,6 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
 
     private lateinit var binding: FragmentConversationsBinding
     private lateinit var adapter: ConversationAdapter
-    private val conversationCollection = FirebaseFirestore.getInstance().collection("conversations")
     private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,16 +42,21 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
     }
 
     private fun initRecyclerView() {
-        val query = conversationCollection
-                .whereEqualTo("participantIDs.${auth.currentUser?.uid.toString()}", true)
-                // .orderBy("lastMessage.time", Query.Direction.DESCENDING)
-        val options = FirestoreRecyclerOptions.Builder<ConversationElement>()
+        if (auth.currentUser != null) {
+            val uid = auth.currentUser?.uid.toString()
+            val conversationCollection =
+                FirebaseFirestore.getInstance().collection("users").document(uid).collection("conversations")
+            val query = conversationCollection
+                .orderBy("lastMessage.time", Query.Direction.DESCENDING)
+            val options = FirestoreRecyclerOptions.Builder<ConversationElement>()
                 .setQuery(query, ConversationElement::class.java)
                 .build()
-        adapter = ConversationAdapter(this, options)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
-        binding.rvConversations.layoutManager = layoutManager
-        binding.rvConversations.adapter = adapter
+            adapter = ConversationAdapter(this, options)
+            val layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            binding.rvConversations.layoutManager = layoutManager
+            binding.rvConversations.adapter = adapter
+        }
     }
 
     override fun getViewResource(): Int = R.layout.fragment_conversations

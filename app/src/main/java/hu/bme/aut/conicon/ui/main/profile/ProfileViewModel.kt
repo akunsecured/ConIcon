@@ -49,25 +49,37 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun getOrCreateConversationID(userID: String) = viewModelScope.launch {
-        val conversationCollection = FirebaseFirestore.getInstance().collection("conversations")
-        val query = conversationCollection
-                .whereEqualTo("participantIDs.${userID}", true)
-                .whereEqualTo("participantIDs.${uid}", true)
+        val conversationsSender =
+            FirebaseFirestore.getInstance().collection("users").document(uid).collection("conversations")
+        val query = conversationsSender
+            .whereEqualTo("participantIDs.${userID}", true)
         query.get().addOnSuccessListener { querySnapshot ->
             if (querySnapshot.isEmpty) {
-                val newConversation = conversationCollection.document()
-                conversationCollection.document(newConversation.id).set(
-                        ConversationElement(
-                                newConversation.id,
-                                hashMapOf(
-                                        userID to true,
-                                        uid to true
-                                )
+                conversationsSender.document("$uid+$userID").set(
+                    ConversationElement(
+                        "$uid+$userID",
+                        hashMapOf(
+                            userID to true,
+                            uid to true
                         )
+                    )
                 ).addOnSuccessListener {
-                    viewState = ConversationReady(newConversation.id, userID)
+                    val conversationsReceiver =
+                        FirebaseFirestore.getInstance().collection("users").document(userID).collection("conversations")
+                    conversationsReceiver.document("$userID+$uid").set(
+                        ConversationElement(
+                            "$userID+$uid",
+                            hashMapOf(
+                                uid to true,
+                                userID to true
+                            )
+                        )
+                    ).addOnSuccessListener {
+                        viewState = ConversationReady("$uid+$userID", userID)
+                    }.addOnFailureListener { ex ->
+                        viewState = DatabaseError(ex.message.toString())
+                    }
                 }.addOnFailureListener { ex ->
-                    viewState = DatabaseError(ex.message.toString())
                 }
             } else {
                 val document = querySnapshot.documents[0]
