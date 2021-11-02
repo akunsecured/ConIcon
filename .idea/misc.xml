@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/drawable/ic_profile.xml" value="0.14635416666666667" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/drawable/rounded_corner_background.xml" value="0.176" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/conversation_item.xml" value="0.16" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/error_dialog.xml" value="0.264" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_home.xml" value="0.264" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_login.xml" value="0.176" />
@@ -15,6 +16,7 @@
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_profile.xml" value="0.2" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/fragment_signup.xml" value="0.16486486486486487" />
         <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/user_item.xml" value="0.19746376811594202" />
+        <entry key="..\:/dev/szakdoga/ConIcon/app/src/main/res/layout/user_posts_item.xml" value="0.16486486486486487" />
       </map>
     </option>
   </component>

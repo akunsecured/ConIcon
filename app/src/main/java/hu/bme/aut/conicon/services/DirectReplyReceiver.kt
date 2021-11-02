@@ -26,9 +26,10 @@ class DirectReplyReceiver : BroadcastReceiver() {
                 val senderID = intent.getStringExtra("senderID")
 
                 if (reply != null && conversationID != null && senderID != null) {
+                    val conversationRef =
+                        FirebaseFirestore.getInstance().collection("conversations").document(conversationID)
                     val messagesCollection =
-                        FirebaseFirestore.getInstance()
-                            .collection("conversations").document(conversationID).collection("messages")
+                        conversationRef.collection("messages")
                     val newDocument = messagesCollection.document()
                     val newMessage =
                         MessageElement(
@@ -38,10 +39,14 @@ class DirectReplyReceiver : BroadcastReceiver() {
                             Date().time
                         )
                     messagesCollection.document(newDocument.id).set(newMessage).addOnSuccessListener {
-                        Toast.makeText(context, "Reply sent successfully", Toast.LENGTH_SHORT).show()
-                        val manager =
-                            context?.getSystemService(FirebaseMessagingService.NOTIFICATION_SERVICE) as NotificationManager
-                        manager.cancel(senderID.hashCode())
+                        Toast.makeText(context, "Sending reply", Toast.LENGTH_SHORT).show()
+
+                        conversationRef.update("lastMessage", newMessage).addOnSuccessListener {
+                            Toast.makeText(context, "Reply sent successfully", Toast.LENGTH_SHORT).show()
+                            val manager =
+                                context?.getSystemService(FirebaseMessagingService.NOTIFICATION_SERVICE) as NotificationManager
+                            manager.cancel(senderID.hashCode())
+                        }
                     }
                 }
             }
