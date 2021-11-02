@@ -3,6 +3,7 @@ package hu.bme.aut.conicon.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -29,6 +30,7 @@ class ConversationAdapter(
         var tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         var tvLastMessage: TextView = itemView.findViewById(R.id.tvLastMessage)
         var tvLastMessageDate: TextView = itemView.findViewById(R.id.tvLastMessageDate)
+        var llLastMessage: LinearLayout = itemView.findViewById(R.id.llLastMessage)
 
         init {
             itemView.setOnClickListener(this)
@@ -75,19 +77,25 @@ class ConversationAdapter(
             }
         }
 
-        val lastMessage = model.lastMessage!!
-        val lastMessageText =
-                if (lastMessage.sentBy == uid) "You: ".plus(
+        if (model.lastMessage != null) {
+            holder.llLastMessage.visibility = View.VISIBLE
+            val lastMessage = model.lastMessage!!
+            val lastMessageText =
+                when {
+                    lastMessage.sentBy == uid -> "You: ".plus(
                         if (lastMessage.isItMedia) "Photo has been sent"
                         else lastMessage.message
-                )
-                else
-                    if (lastMessage.isItMedia) "Photo has been sent"
-                    else lastMessage.message
-        holder.tvLastMessage.text = lastMessageText
-        holder.tvLastMessageDate.text =
+                    )
+                    lastMessage.isItMedia -> "Photo has been sent"
+                    else -> lastMessage.message
+                }
+            holder.tvLastMessage.text = lastMessageText
+            holder.tvLastMessageDate.text =
                 if (lastMessage.time != null) CommonMethods().formatConversationDate(lastMessage.time!!.time)
                 else CommonMethods().formatConversationDate(lastMessage.sentFromClient)
+        } else {
+            holder.llLastMessage.visibility = View.GONE
+        }
     }
 
     interface ConversationItemListener {

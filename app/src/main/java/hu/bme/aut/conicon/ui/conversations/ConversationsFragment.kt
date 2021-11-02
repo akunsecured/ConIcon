@@ -45,12 +45,12 @@ class ConversationsFragment : RainbowCakeFragment<ConversationsViewState, Conver
     private fun initRecyclerView() {
         val query = conversationCollection
                 .whereEqualTo("participantIDs.${auth.currentUser?.uid.toString()}", true)
-                .orderBy("lastMessage.time", Query.Direction.DESCENDING)
+                // .orderBy("lastMessage.time", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<ConversationElement>()
                 .setQuery(query, ConversationElement::class.java)
                 .build()
         adapter = ConversationAdapter(this, options)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
         binding.rvConversations.layoutManager = layoutManager
         binding.rvConversations.adapter = adapter
     }
