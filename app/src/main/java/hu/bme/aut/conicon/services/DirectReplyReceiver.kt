@@ -10,7 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import hu.bme.aut.conicon.constants.AppConstants
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.network.model.MessageElement
+import hu.bme.aut.conicon.ui.CommonMethods
+import org.json.JSONObject
 import java.util.*
 
 class DirectReplyReceiver : BroadcastReceiver() {
@@ -53,6 +56,16 @@ class DirectReplyReceiver : BroadcastReceiver() {
                         receiverChatCollection.document(newMessageDocument.id).set(newMessageElement).addOnSuccessListener {
                             senderConversationRef.update("lastMessage", newMessageElement).addOnSuccessListener {
                                 receiverConversationRef.update("lastMessage", newMessageElement).addOnSuccessListener {
+                                    val data = JSONObject()
+
+                                    data.put("conversationID", "$senderID+$uid")
+                                    data.put("senderID", uid)
+                                    data.put("receiverID", senderID)
+                                    data.put("message", reply.toString())
+                                    data.put("type", NotificationType.MESSAGE.value)
+
+                                    CommonMethods().getTokens(senderID, data, context!!)
+
                                     Toast.makeText(context, "Reply sent successfully", Toast.LENGTH_SHORT).show()
                                     val manager =
                                         context?.getSystemService(FirebaseMessagingService.NOTIFICATION_SERVICE) as NotificationManager

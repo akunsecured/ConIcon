@@ -180,7 +180,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         )
 
                         val intent = Intent(this, NavigationActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         intent.putExtra("conversationID", conversationID)
                         intent.putExtra("senderID", senderID)
                         intent.putExtra("type", NotificationType.MESSAGE.value)
@@ -225,7 +225,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         )
 
                         val intent = Intent(this, NavigationActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         intent.putExtra("mediaID", mediaID)
                         intent.putExtra("type", NotificationType.IMAGE_LIKE.value)
                         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
@@ -248,7 +248,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         )
 
                         val intent = Intent(this, NavigationActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         intent.putExtra("receiverID", receiverID)
                         intent.putExtra("type", NotificationType.FOLLOW.value)
                         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
