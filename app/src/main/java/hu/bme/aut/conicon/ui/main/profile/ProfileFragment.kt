@@ -5,7 +5,6 @@ import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
@@ -16,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
-import hu.bme.aut.conicon.adapter.UserPostAdapter
+import hu.bme.aut.conicon.adapter.UserMediaAdapter
 import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.databinding.FragmentProfileBinding
 import hu.bme.aut.conicon.network.model.AppUser
@@ -33,11 +32,11 @@ import org.json.JSONObject
  * This is the view of the current user's profile
  * Here can the user change profile picture and edit its profile
  */
-class ProfileFragment(private val userID: String, private val isBackEnabled: Boolean = true) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(), UserPostAdapter.UserPostItemClickListener {
+class ProfileFragment(private val userID: String, private val isBackEnabled: Boolean = true) : RainbowCakeFragment<ProfileViewState, ProfileViewModel>(), UserMediaAdapter.UserPostItemClickListener {
 
     private lateinit var binding: FragmentProfileBinding
     private lateinit var user: AppUser
-    private lateinit var adapter: UserPostAdapter
+    private lateinit var adapter: UserMediaAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -197,7 +196,7 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
     }
 
     private fun initRecyclerView() {
-        adapter = UserPostAdapter(this)
+        adapter = UserMediaAdapter(this)
         val gridLayoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvUserPosts.layoutManager = gridLayoutManager
         binding.rvUserPosts.adapter = adapter
@@ -228,7 +227,7 @@ class ProfileFragment(private val userID: String, private val isBackEnabled: Boo
             is UserDataReady -> {
                 user = viewState.user
                 updateUI(user)
-                viewModel.getUserPosts(user.posts)
+                viewModel.getUserPosts(user.id)
             }
 
             NoUserWithThisUID -> {

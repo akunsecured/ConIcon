@@ -233,11 +233,18 @@ class CommonMethods {
         context.startActivity(intent)
     }
 
+    /**
+     * This function gets the tokens of the devices which are connected to
+     * the user whose ID has been given in the parameters
+     * and sends the notification with the content of the given data variable
+     * @param userID The user's ID
+     * @param data The content of the notification
+     * @param context Context
+     */
     fun getTokens(userID: String, data: JSONObject, context: Context) {
         val tokenRef = FirebaseFirestore.getInstance().collection("Tokens").document(userID)
         tokenRef.addSnapshotListener { snapshot, error ->
             if (error != null) {
-                // TODO: Handling error
                 return@addSnapshotListener
             }
 
@@ -251,6 +258,7 @@ class CommonMethods {
                 for (token in tokens.keys) {
                     to.put("to", token)
                     to.put("data", data)
+                    to.put("priority", "high")
 
                     sendNotification(to, context)
                 }
@@ -258,6 +266,11 @@ class CommonMethods {
         }
     }
 
+    /**
+     * This method sends the notification using the Firebase Message Clouding service
+     * @param to Data to be sent
+     * @param context Context to be used by Volley
+     */
     private fun sendNotification(to: JSONObject, context: Context) {
         val request = object: JsonObjectRequest(
             Method.POST,

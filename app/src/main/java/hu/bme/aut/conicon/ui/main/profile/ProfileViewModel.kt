@@ -28,6 +28,9 @@ class ProfileViewModel @Inject constructor(
         val userCollection = FirebaseFirestore.getInstance().collection("users")
         userCollection.document(uid).get().addOnSuccessListener { document ->
             if (document.exists()) {
+                val user = document.toObject(AppUser::class.java)!!
+                viewState = UserDataReady(user)
+                /*
                 val username = document.data?.get("username").toString()
                 val email = document.data?.get("email").toString()
                 var photoUrl: String? = document.data?.get("photoUrl") as String?
@@ -40,6 +43,7 @@ class ProfileViewModel @Inject constructor(
                                 uid, username, email, photoUrl, followers, following, posts
                         )
                 )
+                */
             } else {
                 viewState = NoUserWithThisUID
             }
@@ -90,31 +94,29 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getUserPosts(postIDs: MutableList<String>) = viewModelScope.launch {
+    fun getUserPosts(userID: String) = viewModelScope.launch {
         val userPosts = mutableListOf<MediaElement>()
-        if (postIDs.isEmpty()) {
-            viewState = UserPostsReady(userPosts)
-        } else {
 
-            val postCollection = FirebaseFirestore.getInstance().collection("posts")
-            val query = postCollection.whereIn("id", postIDs)
-                    .orderBy("date", Query.Direction.ASCENDING)
-            query.get().addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    for (document in querySnapshot.documents) {
-                        val userPost = document.toObject(MediaElement::class.java)
-                        if (userPost != null) {
-                            userPosts.add(
-                                userPost
-                            )
-                        }
+        val postCollection = FirebaseFirestore.getInstance().collection("posts")
+        val query = postCollection
+                //.whereIn("id", postIDs)
+                .whereEqualTo("ownerID", userID)
+                .orderBy("date", Query.Direction.ASCENDING)
+        query.get().addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                for (document in querySnapshot.documents) {
+                    val userPost = document.toObject(MediaElement::class.java)
+                    if (userPost != null) {
+                        userPosts.add(
+                            userPost
+                        )
                     }
                 }
-
-                viewState = UserPostsReady(userPosts)
-            }.addOnFailureListener { ex ->
-                viewState = DatabaseError(ex.message.toString())
             }
+
+            viewState = UserPostsReady(userPosts)
+        }.addOnFailureListener { ex ->
+            viewState = DatabaseError(ex.message.toString())
         }
     }
 }

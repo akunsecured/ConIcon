@@ -6,13 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import co.zsmb.rainbowcake.navigation.navigator
 import hu.bme.aut.conicon.R
-import hu.bme.aut.conicon.adapter.MediaAdapter
+import hu.bme.aut.conicon.adapter.HomePostAdapter
 import hu.bme.aut.conicon.databinding.FragmentHomeBinding
+import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.conversations.ConversationsFragment
@@ -23,11 +25,13 @@ import hu.bme.aut.conicon.ui.search.SearchFragment
 /**
  * This is the view where the posts will be shown
  */
-class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaAdapter.MediaItemListener {
+class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), HomePostAdapter.HomePostListener {
 
     private lateinit var binding: FragmentHomeBinding
     private var posts = mutableListOf<MediaElement>()
-    private lateinit var adapter: MediaAdapter
+    private var user: AppUser? = null
+    private lateinit var followingPostAdapter: HomePostAdapter
+    private lateinit var otherUserPostAdapter: HomePostAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -37,16 +41,16 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initRecyclerView()
-
         binding.swipeRefreshLayout.setOnRefreshListener {
-            adapter.mediaElements.clear()
-            adapter.linkedUsers.clear()
-            viewModel.getPosts()
+            followingPostAdapter.mediaElements.clear()
+            followingPostAdapter.linkedUsers.clear()
+            otherUserPostAdapter.mediaElements.clear()
+            otherUserPostAdapter.linkedUsers.clear()
+            viewModel.getUserData()
         }
 
         binding.ivLogoMin.setOnClickListener {
-            (binding.rvPosts.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
+            (binding.rvFollowingPosts.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(0, 0)
         }
 
         binding.ivSearch.setOnClickListener {
@@ -63,14 +67,7 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
             )
         }
 
-        viewModel.getPosts()
-    }
-
-    private fun initRecyclerView() {
-        adapter = MediaAdapter(requireContext(), this)
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.rvPosts.layoutManager = layoutManager
-        binding.rvPosts.adapter = adapter
+        viewModel.getUserData()
     }
 
     override fun getViewResource(): Int = R.layout.fragment_home
@@ -87,11 +84,43 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
                 binding.swipeRefreshLayout.isRefreshing = true
             }
 
+            is UserDataReady -> {
+                user = viewState.user
+
+                viewModel.getPosts()
+            }
+
+            UserNotFound -> {
+                binding.swipeRefreshLayout.visibility = View.GONE
+
+                viewModel.init()
+            }
+
             is PostsReady -> {
                 posts = viewState.posts
 
-                if (posts.size > 0) {
-                    adapter.addPosts(posts)
+                val followingPosts = posts.filter { mediaElement -> user?.following?.contains(mediaElement.ownerID)!! }
+                val otherUserPosts = posts.filter {
+                        mediaElement ->
+                            !user?.following?.contains(mediaElement.ownerID)!! && mediaElement.ownerID != user?.id
+                }
+
+                followingPostAdapter = HomePostAdapter(this, requireContext())
+                otherUserPostAdapter = HomePostAdapter(this, requireContext())
+
+                initRecyclerView(binding.rvFollowingPosts, followingPosts, followingPostAdapter)
+                initRecyclerView(binding.rvOtherPosts, otherUserPosts, otherUserPostAdapter)
+
+                when (followingPosts.size) {
+                    0 -> {
+                        binding.llEndOfPosts.visibility = View.GONE
+                        binding.tvNoPosts.visibility = View.VISIBLE
+                    }
+
+                    else -> {
+                        binding.llEndOfPosts.visibility = View.VISIBLE
+                        binding.tvNoPosts.visibility = View.GONE
+                    }
                 }
 
                 viewModel.init()
@@ -104,10 +133,23 @@ class HomeFragment : RainbowCakeFragment<HomeViewState, HomeViewModel>(), MediaA
         }.exhaustive
     }
 
+    private fun initRecyclerView(
+        recyclerView: RecyclerView,
+        posts: List<MediaElement>,
+        postAdapter: HomePostAdapter
+    ) {
+        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = postAdapter
+
+        if (posts.isNotEmpty()) {
+            postAdapter.addPosts(posts)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
-        // TODO: Database handling
         viewModel.init()
     }
 

@@ -42,4 +42,6 @@
     <string name="error">Error</string>
     <string name="ok">Ok</string>
     <string name="error_user_deleted">This account has been deleted</string>
+    <string name="end_of_the_posts">You have reached the end of the posts of the people you are following</string>
+    <string name="no_posts_from_following">No posts from the people you are following</string>
 </resources>

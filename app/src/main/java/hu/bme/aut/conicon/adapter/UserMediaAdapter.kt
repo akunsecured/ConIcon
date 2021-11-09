@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.network.model.MediaElement
 
-class UserPostAdapter(private val listener: UserPostItemClickListener) : RecyclerView.Adapter<UserPostAdapter.UserPostViewHolder>() {
+class UserMediaAdapter(private val listener: UserPostItemClickListener) : RecyclerView.Adapter<UserMediaAdapter.UserPostViewHolder>() {
     var userPostElements = mutableListOf<MediaElement>()
 
     inner class UserPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {

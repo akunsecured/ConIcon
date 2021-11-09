@@ -15,12 +15,14 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.constants.NotificationType
 import hu.bme.aut.conicon.databinding.FragmentPostBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
+import org.json.JSONObject
 
 class PostFragment(private val post: MediaElement) : RainbowCakeFragment<PostViewState, PostViewModel>() {
 
@@ -88,6 +90,15 @@ class PostFragment(private val post: MediaElement) : RainbowCakeFragment<PostVie
 
                 post.likes.add(uid)
                 postReference.update("likes", FieldValue.arrayUnion(uid))
+
+                val data = JSONObject()
+
+                data.put("receiverID", post.ownerID)
+                data.put("mediaID", post.id)
+                data.put("type", NotificationType.IMAGE_LIKE.value)
+                data.put("senderID", uid)
+
+                CommonMethods().getTokens(post.ownerID, data, requireContext())
             }
 
             checkLikes()
