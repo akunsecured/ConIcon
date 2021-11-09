@@ -125,7 +125,7 @@ class HomePostAdapter(
         }
 
         holder.btnComment.setOnClickListener {
-            Toast.makeText(context, "Comment", Toast.LENGTH_SHORT).show()
+            listener.viewComments(mediaElement)
         }
 
         checkLikes(holder, mediaElement)
@@ -154,6 +154,7 @@ class HomePostAdapter(
         fun viewLikes(likes: MutableList<String>)
         fun viewProfile(userID: String)
         fun viewLocation(lat: Double, lng: Double)
+        fun viewComments(post: MediaElement)
     }
 
     fun addPosts(posts: List<MediaElement>) {

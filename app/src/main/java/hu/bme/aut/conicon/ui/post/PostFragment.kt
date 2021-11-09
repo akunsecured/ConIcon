@@ -20,6 +20,7 @@ import hu.bme.aut.conicon.databinding.FragmentPostBinding
 import hu.bme.aut.conicon.network.model.AppUser
 import hu.bme.aut.conicon.network.model.MediaElement
 import hu.bme.aut.conicon.ui.CommonMethods
+import hu.bme.aut.conicon.ui.comment.CommentFragment
 import hu.bme.aut.conicon.ui.likes.UsersFragment
 import hu.bme.aut.conicon.ui.main.profile.ProfileFragment
 import org.json.JSONObject
@@ -104,6 +105,10 @@ class PostFragment(private val post: MediaElement) : RainbowCakeFragment<PostVie
             checkLikes()
         }
 
+        binding.includedPost.btnComment.setOnClickListener {
+            viewComments(post)
+        }
+
         binding.includedPost.tvUsername.setOnClickListener {
             viewProfile(post.ownerID)
         }
@@ -111,6 +116,16 @@ class PostFragment(private val post: MediaElement) : RainbowCakeFragment<PostVie
         binding.includedPost.ivProfilePicture.setOnClickListener {
             viewProfile(post.ownerID)
         }
+    }
+
+    private fun viewComments(post: MediaElement) {
+        navigator?.add(
+            CommentFragment(post),
+            R.anim.from_down_to_up_in,
+            R.anim.from_down_to_up_out,
+            R.anim.from_up_to_down_in,
+            R.anim.from_up_to_down_out
+        )
     }
 
     private fun checkLikes() {

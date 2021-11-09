@@ -29,7 +29,7 @@
     <string name="follow">Follow</string>
     <string name="message">Message</string>
     <string name="chats">Chats</string>
-    <string name="type_to_message">Message…</string>
+    <string name="type_to_message">Aa…</string>
     <string name="no_user_posts">When you share photos and videos, they\'ll appear here</string>
     <string name="post">Post</string>
     <string name="edit_profile_picture">Edit profile picture</string>
@@ -44,4 +44,6 @@
     <string name="error_user_deleted">This account has been deleted</string>
     <string name="end_of_the_posts">You have reached the end of the posts of the people you are following</string>
     <string name="no_posts_from_following">No posts from the people you are following</string>
+    <string name="comments">Comments</string>
+    <string name="type_to_comment">Write something…</string>
 </resources>

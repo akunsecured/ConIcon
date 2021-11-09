@@ -6,6 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import hu.bme.aut.conicon.ui.chat.ChatViewModel
+import hu.bme.aut.conicon.ui.comment.CommentViewModel
 import hu.bme.aut.conicon.ui.conversations.ConversationsViewModel
 import hu.bme.aut.conicon.ui.editprofile.EditProfileViewModel
 import hu.bme.aut.conicon.ui.likes.UsersViewModel
@@ -85,4 +86,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SearchViewModel::class)
     abstract fun bindSearchViewModel(searchViewModel: SearchViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CommentViewModel::class)
+    abstract fun bindCommentViewModel(commentViewModel: CommentViewModel) : ViewModel
 }

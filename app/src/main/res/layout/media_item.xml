@@ -17,10 +17,10 @@
             android:id="@+id/ivProfilePicture"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_profile"
+            android:layout_alignParentTop="true"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="12dp"
-            android:layout_alignParentTop="true" />
+            android:src="@drawable/ic_profile" />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -73,48 +73,48 @@
         android:id="@+id/llChatInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:background="@drawable/rounded_corner_background"
             android:paddingVertical="8dp"
-            android:layout_margin="8dp"
             android:weightSum="9">
 
             <EditText
                 android:id="@+id/etMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:layout_weight="8"
+                android:background="@android:color/transparent"
                 android:hint="@string/type_to_message"
                 android:textSize="20sp"
-                android:layout_marginStart="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/ivSend"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="8"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/ivSelectImage"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_camera"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:src="@drawable/ic_camera" />
 
             <ImageView
                 android:id="@+id/ivSend"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_send"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:visibility="gone"/>
+                android:src="@drawable/ic_send"
+                android:visibility="gone" />
 
         </LinearLayout>
 
