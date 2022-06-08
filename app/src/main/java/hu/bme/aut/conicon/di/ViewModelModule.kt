@@ -5,11 +5,18 @@ import co.zsmb.rainbowcake.dagger.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import hu.bme.aut.conicon.ui.chat.ChatViewModel
+import hu.bme.aut.conicon.ui.comment.CommentViewModel
+import hu.bme.aut.conicon.ui.conversations.ConversationsViewModel
+import hu.bme.aut.conicon.ui.editprofile.EditProfileViewModel
+import hu.bme.aut.conicon.ui.likes.UsersViewModel
 import hu.bme.aut.conicon.ui.login.LoginViewModel
 import hu.bme.aut.conicon.ui.main.MainViewModel
 import hu.bme.aut.conicon.ui.main.home.HomeViewModel
 import hu.bme.aut.conicon.ui.main.postupload.PostUploadViewModel
 import hu.bme.aut.conicon.ui.main.profile.ProfileViewModel
+import hu.bme.aut.conicon.ui.post.PostViewModel
+import hu.bme.aut.conicon.ui.search.SearchViewModel
 import hu.bme.aut.conicon.ui.setusername.SetUsernameViewModel
 import hu.bme.aut.conicon.ui.signup.SignUpViewModel
 
@@ -49,4 +56,39 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PostUploadViewModel::class)
     abstract fun bindPostUploadViewModel(postUploadViewModel: PostUploadViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UsersViewModel::class)
+    abstract fun bindUsersViewModel(usersViewModel: UsersViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConversationsViewModel::class)
+    abstract fun bindConversationsViewModel(conversationsViewModel: ConversationsViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChatViewModel::class)
+    abstract fun bindChatViewModel(chatViewModel: ChatViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PostViewModel::class)
+    abstract fun bindPostViewModel(postViewModel: PostViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EditProfileViewModel::class)
+    abstract fun bindEditProfileViewModel(editProfileViewModel: EditProfileViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun bindSearchViewModel(searchViewModel: SearchViewModel) : ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CommentViewModel::class)
+    abstract fun bindCommentViewModel(commentViewModel: CommentViewModel) : ViewModel
 }

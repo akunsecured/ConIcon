@@ -15,6 +15,7 @@ import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentSetusernameBinding
 import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.main.MainFragment
+import java.util.*
 
 class SetUsernameFragment : RainbowCakeFragment<SetUsernameViewState, SetUsernameViewModel>() {
 
@@ -47,7 +48,7 @@ class SetUsernameFragment : RainbowCakeFragment<SetUsernameViewState, SetUsernam
         }
 
         binding.btnSubmit.setOnClickListener {
-            viewModel.checkUsernameStatus(binding.tietUsername.text.toString())
+            viewModel.checkUsernameStatus(binding.tietUsername.text.toString().toLowerCase(Locale.ROOT))
         }
     }
 

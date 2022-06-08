@@ -3,9 +3,7 @@ package hu.bme.aut.conicon.ui.signup
 import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import hu.bme.aut.conicon.network.model.AppUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,31 +27,30 @@ class SignUpViewModel @Inject constructor(
     fun signUp(username: String, email: String, password: String) = viewModelScope.launch {
         viewState = Loading
         delay(500)
-        // Getting the users' database
-        val userDatabaseReference = Firebase.database.reference.child("users")
-        userDatabaseReference.get().addOnSuccessListener { dataSnapshot ->
-            // Checking if username is in use
-            if (dataSnapshot.childrenCount > 0) {
-                for (child in dataSnapshot.children) {
-                    val user = child.value as HashMap<*, *>
-                    if (user["username"] == username) {
-                        viewState = UsernameError("asd")
-                        break
-                    }
-                }
-            }
 
-            // Username is not in use
-            if (viewState == Loading) {
+        val userCollection = FirebaseFirestore.getInstance().collection("users")
+        val query = userCollection.whereEqualTo("username", username)
+        query.get().addOnSuccessListener { querySnapshot ->
+            // Checking if username is in use
+            if (querySnapshot.isEmpty) {
                 // Creating the new user record into the
                 // Authentication table of Firebase
                 val auth = FirebaseAuth.getInstance()
                 auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener { authResult ->
                     // If it was successful, we can use the UID
-                    // to create a new record into the Realtime Database
+                    // to create a new record into the Firestore
                     val uid = authResult.user?.uid.toString()
-                    val newUser = AppUser(uid, username, email, null, mutableListOf(), mutableListOf(), mutableListOf())
-                    userDatabaseReference.child(uid).setValue(newUser).addOnSuccessListener {
+                    userCollection.document(uid).set(
+                            hashMapOf(
+                                "id" to uid,
+                                "username" to username,
+                                "email" to email,
+                                "photoUrl" to null,
+                                "followers" to mutableListOf<String>(),
+                                "following" to mutableListOf<String>(),
+                                "posts" to mutableListOf<String>()
+                            )
+                    ).addOnSuccessListener {
                         auth.currentUser?.sendEmailVerification()
                         // Logging out the user
                         auth.signOut()
@@ -64,6 +61,9 @@ class SignUpViewModel @Inject constructor(
                 }.addOnFailureListener { ex ->
                     viewState = SignUpError(ex.message.toString())
                 }
+            } else {
+                // Username is already taken
+                viewState = UsernameError("Username is already taken")
             }
         }.addOnFailureListener { ex ->
             viewState = DatabaseError(ex.message.toString())

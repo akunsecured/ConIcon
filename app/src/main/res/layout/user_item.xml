@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="?android:selectableItemBackground">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivProfilePicture"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="12dp"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/username"
+        android:maxLength="20"
+        android:textSize="18sp"
+        android:layout_toEndOf="@id/ivProfilePicture"
+        android:layout_centerVertical="true" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFollowOut"
+        android:layout_width="108dp"
+        android:layout_height="wrap_content"
+        android:text="@string/following"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        android:layout_margin="8dp"
+        app:strokeColor="@color/color_application"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnFollow"
+        android:layout_width="108dp"
+        android:layout_height="wrap_content"
+        android:text="@string/follow"
+        android:textAllCaps="false"
+        android:textSize="14sp"
+        android:layout_margin="8dp"
+        app:strokeColor="@color/color_application"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

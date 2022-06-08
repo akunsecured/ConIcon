@@ -7,6 +7,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="or">or</string>
+    <string name="signing_in">Signing in</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="username">Username</string>
     <string name="confirm_password">Confirm password</string>
@@ -24,4 +25,25 @@
     <string name="select_image">Select image</string>
     <string name="post_image">Post image</string>
     <string name="posting_a_new_image">Posting a new image</string>
+    <string name="likes">Likes</string>
+    <string name="follow">Follow</string>
+    <string name="message">Message</string>
+    <string name="chats">Chats</string>
+    <string name="type_to_message">Aa…</string>
+    <string name="no_user_posts">When you share photos and videos, they\'ll appear here</string>
+    <string name="post">Post</string>
+    <string name="edit_profile_picture">Edit profile picture</string>
+    <string name="delete_profile">Delete profile</string>
+    <string name="type_to_search">Search…</string>
+    <string name="select_location">Select location</string>
+    <string name="use_current_location">Use current location</string>
+    <string name="location_permission_request">Please give location permission in the settings!</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="error">Error</string>
+    <string name="ok">Ok</string>
+    <string name="error_user_deleted">This account has been deleted</string>
+    <string name="end_of_the_posts">You have reached the end of the posts of the people you are following</string>
+    <string name="no_posts_from_following">No posts from the people you are following</string>
+    <string name="comments">Comments</string>
+    <string name="type_to_comment">Write something…</string>
 </resources>

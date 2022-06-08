@@ -14,16 +14,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import hu.bme.aut.conicon.R
+import hu.bme.aut.conicon.UserStatusListener
 import hu.bme.aut.conicon.databinding.FragmentLoginBinding
 import hu.bme.aut.conicon.ui.CommonMethods
 import hu.bme.aut.conicon.ui.main.MainFragment
 import hu.bme.aut.conicon.ui.setusername.SetUsernameFragment
 import hu.bme.aut.conicon.ui.signup.SignUpFragment
+import java.util.*
 
 /**
  * The application's user can login through this Fragment
  */
-class LoginFragment : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
+class LoginFragment(private val listener: UserStatusListener) : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
 
     private lateinit var binding: FragmentLoginBinding
 
@@ -41,7 +43,7 @@ class LoginFragment : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
 
         binding.btnLogin.setOnClickListener {
             if (!checkEmptyEditTexts()) {
-                val emailOrUsername = binding.tietEmailOrUsername.text.toString()
+                val emailOrUsername = binding.tietEmailOrUsername.text.toString().trim().toLowerCase(Locale.ROOT)
                 val password = binding.tietPassword.text.toString()
 
                 viewModel.login(emailOrUsername, password)
@@ -129,6 +131,7 @@ class LoginFragment : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
                 binding.tietEmailOrUsername.text?.clear()
                 binding.tietPassword.text?.clear()
 
+                listener.startListeningStatus()
                 navigator?.replace(MainFragment(), R.anim.from_up_to_down_in, R.anim.from_up_to_down_out, R.anim.from_down_to_up_in, R.anim.from_down_to_up_out)
             }
 
@@ -143,6 +146,7 @@ class LoginFragment : RainbowCakeFragment<LoginViewState, LoginViewModel>() {
             }
 
             SetUsername -> {
+                listener.startListeningStatus()
                 navigator?.replace(SetUsernameFragment())
                 viewModel.init()
             }

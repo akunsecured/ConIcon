@@ -1,14 +1,11 @@
 package hu.bme.aut.conicon.ui.login
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import hu.bme.aut.conicon.network.model.AppUser
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -58,31 +55,24 @@ class LoginViewModel @javax.inject.Inject constructor(
         } else {
             // If it is a username, we have to search for the user who owns it
             var email = ""
-            val userDatabaseReference = Firebase.database.reference.child("users")
-            userDatabaseReference.get().addOnSuccessListener { dataSnapshot ->
-                if (dataSnapshot.childrenCount > 0) {
-                    for (child in dataSnapshot.children) {
-                        val user = child.value as HashMap<*, *>
-                        if (user["username"] == emailOrUsername) {
-                            // If we found it, we save the email
-                            email = user["email"].toString()
-                            break
-                        }
-                    }
 
-                    // The email can only be empty if there is no user with the given username
-                    if (email.isEmpty()) {
-                        viewState = LoginError("No user with this username")
-                    } else {
-                        // We can sign in
-                        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-                            viewState = SuccessfulLogin
-                        }.addOnFailureListener { ex ->
-                            viewState = LoginError(ex.message.toString())
-                        }
-                    }
-                } else {
+            val userCollection = FirebaseFirestore.getInstance().collection("users")
+            val query = userCollection.whereEqualTo("username", emailOrUsername)
+            query.get().addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    email = document.data?.get("email").toString()
+                }
+
+                if (email.isEmpty()) {
                     viewState = LoginError("No user with this username")
+                } else {
+                    // We can sign in
+                    auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+                        viewState = SuccessfulLogin
+                    }.addOnFailureListener { ex ->
+                        viewState = LoginError(ex.message.toString())
+                    }
                 }
             }.addOnFailureListener { ex ->
                 viewState = DatabaseError(ex.message.toString())
@@ -101,16 +91,15 @@ class LoginViewModel @javax.inject.Inject constructor(
 
         auth.signInWithCredential(credential).addOnSuccessListener { authResult ->
             val uid = authResult.user?.uid.toString()
-            val userDatabaseReference = Firebase.database.reference.child("users")
 
-            userDatabaseReference.child(uid).get().addOnSuccessListener { dataSnapshot ->
-                if (dataSnapshot.value == null) {
+            val userCollection = FirebaseFirestore.getInstance().collection("users")
+            userCollection.document(uid).get().addOnSuccessListener { document ->
+                if (document.exists()) {
+                    viewState = SuccessfulLogin
+                } else {
                     val sharedPref = context.getSharedPreferences("CONICON_AUTH", Context.MODE_PRIVATE)
                     sharedPref.edit().putBoolean("no_username", true).apply()
                     viewState = SetUsername
-                } else {
-                    // If the account exists in the Realtime Database, we logged in
-                    viewState = SuccessfulLogin
                 }
             }.addOnFailureListener { ex ->
                 viewState = DatabaseError(ex.message.toString())

@@ -1,6 +1,7 @@
 package hu.bme.aut.conicon.ui.signup
 
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import co.zsmb.rainbowcake.navigation.navigator
 import hu.bme.aut.conicon.R
 import hu.bme.aut.conicon.databinding.FragmentSignupBinding
 import hu.bme.aut.conicon.ui.CommonMethods
+import java.util.*
 
 /**
  * The application's user can sign up through this Fragment
@@ -45,9 +47,9 @@ class SignUpFragment : RainbowCakeFragment<SignUpViewState, SignUpViewModel>() {
                             CommonMethods().regexUsername
                         )
                     ) {
-                        val username = binding.tietUsername.text.toString()
-                        if (android.util.Patterns.EMAIL_ADDRESS.matcher(binding.tietEmail.text.toString()).matches()) {
-                            val email = binding.tietEmail.text.toString()
+                        val username = binding.tietUsername.text.toString().toLowerCase(Locale.ROOT)
+                        if (Patterns.EMAIL_ADDRESS.matcher(binding.tietEmail.text.toString()).matches()) {
+                            val email = binding.tietEmail.text.toString().toLowerCase(Locale.ROOT)
                             if (CommonMethods().checkEditTextLength(
                                     binding.tietPassword,
                                     binding.tilPassword,
